@@ -13,7 +13,7 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
   <meta name="theme-color" content="#2f4154">
-  <meta name="author" content="Eddy">
+  <meta name="author" content="Oxley">
   <meta name="keywords" content="">
   
     <meta name="description" content="Linux网络性能调优增加环缓冲，减少丢包率接收环缓冲在设备驱动程序和网络接口控制器(NIC)之间共享。网卡分配一个传输(TX)和接收(RX)环缓冲。环缓冲的名称意味着它是循环缓冲区，如果溢出会导致新到的数据覆盖现有数据。 内核使用 RX 环缓冲来存储传入的数据包，直到它们可以被网卡设备驱动程序处理。设备驱动程序排空 RX 环，通常使用 SoftIRQ，将传入的数据包置于名为 sk_buff 或">
@@ -25,8 +25,8 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/image/cover/cats-8096304_1280.jpg">
 <meta property="article:published_time" content="2023-09-20T02:58:15.000Z">
-<meta property="article:modified_time" content="2023-09-21T08:53:37.112Z">
-<meta property="article:author" content="Eddy">
+<meta property="article:modified_time" content="2026-04-24T06:42:28.540Z">
+<meta property="article:author" content="Oxley">
 <meta property="article:tag" content="smp_affinity_list">
 <meta property="article:tag" content="ethtool">
 <meta property="article:tag" content="Linux网络性能调优">
@@ -100,7 +100,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>Eddy&#39;s Blog</strong>
+      <strong>Oxley&#39;s Blog</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
@@ -292,7 +292,7 @@
               <p class="note note-info">
                 
                   
-                    本文最后更新于：2023年9月21日 下午
+                    本文最后更新于：2026年4月24日 下午
                   
                 
               </p>
@@ -376,7 +376,7 @@
 <p>如果丢弃的计数器仍然增加，请再次加倍传输队列长度。重复此过程，直到计数器不再增加。</p>
 <h2 id="调整IRQ平衡"><a href="#调整IRQ平衡" class="headerlink" title="调整IRQ平衡"></a>调整IRQ平衡</h2><h3 id="配置硬件中断亲和性"><a href="#配置硬件中断亲和性" class="headerlink" title="配置硬件中断亲和性"></a>配置硬件中断亲和性</h3><p>当网络接口控制器(NIC)接收传入数据时，它会使用直接内存访问(DMA)将数据复制到内核缓冲区中。然后，NIC 通过触发硬中断来通知内核有关此数据。这些中断由中断处理程序处理，这些处理程序执行最少的工作，因为它们已中断另一个任务，处理程序无法中断自己。硬中断可能会牺牲 CPU 用量，特别是在使用内核锁定时。</p>
 <p>然后，硬中断会使处理器将大多数数据包接收程序留给软件中断请求(SoftIRQ)进程。内核可以更频繁地调度这些进程。</p>
-<p>用户可根据调整硬件中断与CPU的亲和性来提高性能，具体调整方法可查看[<a target="_blank" rel="noopener" href="https://eddyvv.github.io/2023/09/08/Linux%E5%86%85%E6%A0%B8%E7%BD%91%E5%8D%A1%E4%B8%AD%E6%96%AD%E5%88%86%E9%85%8D%E4%B8%8D%E5%9D%87%E8%B0%83%E4%BC%98/">Linux内核网卡中断分配不均调优 - 凛冬将至 (eddyvv.github.io)</a>]。</p>
+<p>用户可根据调整硬件中断与CPU的亲和性来提高性能，具体调整方法可查看[<a target="_blank" rel="noopener" href="https://oxley-z.github.io/2023/09/08/Linux%E5%86%85%E6%A0%B8%E7%BD%91%E5%8D%A1%E4%B8%AD%E6%96%AD%E5%88%86%E9%85%8D%E4%B8%8D%E5%9D%87%E8%B0%83%E4%BC%98/">Linux内核网卡中断分配不均调优 - 凛冬将至 (oxley-z.github.io)</a>]。</p>
 <h3 id="irqbalance服务"><a href="#irqbalance服务" class="headerlink" title="irqbalance服务"></a>irqbalance服务</h3><p><code>irqbalance</code>项目主页：<a target="_blank" rel="noopener" href="http://irqbalance.github.io/irqbalance/">Irqbalance</a></p>
 <p><code>irqbalance</code> 用于优化中断分配，它会自动收集系统数据以分析使用模式，并依据系统负载状况将工作状态置于 <code>Performance mode</code> 或 <code>Power-save mode</code>。在具有和不使用非统一内存访问(NUMA)架构的系统上，<code>irqbalance</code> 服务根据系统状况有效地在 CPU 内核间平衡中断。<code>irqbalance</code> 服务在后台运行，每 10 秒监控 CPU 负载。当 CPU 的负载过高时，该服务会将中断移到其他 CPU 内核，使处理器更有效地处理负载。</p>
 <p>处于 <code>Performance mode</code> 时，<code>irqbalance</code> 会将中断尽可能均匀地分发给各个 <code>CPU core</code>，以充分利用 CPU 多核，提升性能。<br>处于 <code>Power-save mode</code> 时，<code>irqbalance</code> 会将中断集中分配给第一个 CPU，以保证其它空闲 CPU 的睡眠时间，降低能耗。</p>
@@ -451,7 +451,7 @@
       
         <div class="license-meta-item">
           <div>作者</div>
-          <div>Eddy</div>
+          <div>Oxley</div>
         </div>
       
       
