@@ -1,0 +1,802 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/zipper-mouth_face_3d.png">
+  <link rel="icon" href="/img/zipper-mouth_face_3d.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Oxley">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Soft-RoCE部署及通信测试环境操作系统： Windows10+Ubuntu20.04*2（虚拟机） 软件： VmWare Workstation 16 Pro 16.2.4 虚拟机*2 ubuntu-20.04.3-desktop-amd64  Soft-RoCE部署部署RDMA软件栈确认内核是否支持RXE1cat &#x2F;boot&#x2F;config-$(uname -r) | grep RXE">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Soft-RoCE部署及通信测试">
+<meta property="og:url" content="http://example.com/2026/05/15/RDMA/Soft-RoCE%E9%83%A8%E7%BD%B2%E5%8F%8A%E9%80%9A%E4%BF%A1%E6%B5%8B%E8%AF%95/index.html">
+<meta property="og:site_name" content="凛冬将至">
+<meta property="og:description" content="Soft-RoCE部署及通信测试环境操作系统： Windows10+Ubuntu20.04*2（虚拟机） 软件： VmWare Workstation 16 Pro 16.2.4 虚拟机*2 ubuntu-20.04.3-desktop-amd64  Soft-RoCE部署部署RDMA软件栈确认内核是否支持RXE1cat &#x2F;boot&#x2F;config-$(uname -r) | grep RXE">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/image/cover/sea-2361247_1280.jpg">
+<meta property="article:published_time" content="2026-05-15T02:56:59.000Z">
+<meta property="article:modified_time" content="2026-05-15T08:01:49.478Z">
+<meta property="article:author" content="Oxley">
+<meta property="article:tag" content="RDMA">
+<meta property="article:tag" content="Soft-RoCE">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/image/cover/sea-2361247_1280.jpg">
+  
+  
+  
+  <title>Soft-RoCE部署及通信测试 - 凛冬将至</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":90,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"appId":"UeFj0nSPOcD3JQcbVPIsrisJ-MdYXbMMI","appKey":"cNI2q6S4vqA3QtbX0FbIndWx","server_url":null,"path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Oxley&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/images/sky-clouds-sunlight-dark-e3e45ad8c5ae22995c2fd77a994dfc61.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Soft-RoCE部署及通信测试"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-05-15 10:56" pubdate>
+          2026年5月15日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          30 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Soft-RoCE部署及通信测试</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：2026年5月15日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Soft-RoCE部署及通信测试"><a href="#Soft-RoCE部署及通信测试" class="headerlink" title="Soft-RoCE部署及通信测试"></a>Soft-RoCE部署及通信测试</h1><h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><p>操作系统：</p>
+<p>Windows10+Ubuntu20.04*2（虚拟机）</p>
+<p>软件：</p>
+<p>VmWare Workstation 16 Pro 16.2.4</p>
+<p>虚拟机*2</p>
+<p>ubuntu-20.04.3-desktop-amd64 </p>
+<h1 id="Soft-RoCE部署"><a href="#Soft-RoCE部署" class="headerlink" title="Soft-RoCE部署"></a>Soft-RoCE部署</h1><h2 id="部署RDMA软件栈"><a href="#部署RDMA软件栈" class="headerlink" title="部署RDMA软件栈"></a>部署RDMA软件栈</h2><h3 id="确认内核是否支持RXE"><a href="#确认内核是否支持RXE" class="headerlink" title="确认内核是否支持RXE"></a>确认内核是否支持RXE</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cat</span> /boot/config-$(<span class="hljs-built_in">uname</span> -r) | grep RXE<br></code></pre></td></tr></table></figure>
+
+<p><img src="/image/Soft-RoCE%E9%83%A8%E7%BD%B2%E5%8F%8A%E9%80%9A%E4%BF%A1%E6%B5%8B%E8%AF%95/IMG-20260515105611869.png" srcset="/img/loading.gif" lazyload alt="IMG-20260515105611869"></p>
+<p>如果CONFIG_RDMA_RXE的值为y或者m，表示当前的操作系统可以使用RXE。</p>
+<h3 id="安装用户态动态链接库"><a href="#安装用户态动态链接库" class="headerlink" title="安装用户态动态链接库"></a>安装用户态动态链接库</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo apt-get install libibverbs1 ibverbs-utils librdmacm1 libibumad3 ibverbs-providers rdma-core<br>dpkg -L libibverbs1   //查看包内容<br></code></pre></td></tr></table></figure>
+
+<p><img src="/image/Soft-RoCE%E9%83%A8%E7%BD%B2%E5%8F%8A%E9%80%9A%E4%BF%A1%E6%B5%8B%E8%AF%95/IMG-20260515105611633.png" srcset="/img/loading.gif" lazyload alt="IMG-20260515105611633"></p>
+<p>安装完成后查看ibv_devices</p>
+<p><img src="/image/Soft-RoCE%E9%83%A8%E7%BD%B2%E5%8F%8A%E9%80%9A%E4%BF%A1%E6%B5%8B%E8%AF%95/IMG-20260515105611839.png" srcset="/img/loading.gif" lazyload alt="IMG-20260515105611839"></p>
+<h2 id="安装其他工具"><a href="#安装其他工具" class="headerlink" title="安装其他工具"></a>安装其他工具</h2><ol>
+<li>iproute2</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo apt-get install iproute2<br></code></pre></td></tr></table></figure>
+
+<p>iproute2是用来替代net-tools软件包的，是一组开源的网络工具集合，比如用更强大ip命令替换了以前常用的ifconfig。我们需要其中的rdma工具来对RXE进行配置。一般的操作系统都已经包含了，安装也很简单：</p>
+<ol start="2">
+<li>perftest</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo apt-get install perftest<br></code></pre></td></tr></table></figure>
+
+<h2 id="克隆虚拟机"><a href="#克隆虚拟机" class="headerlink" title="克隆虚拟机"></a>克隆虚拟机</h2><p>注意：需要选择完整克隆</p>
+<h2 id="配置网络模式"><a href="#配置网络模式" class="headerlink" title="配置网络模式"></a>配置网络模式</h2><p>两台虚拟机均选择NET模式（N）：用于共享主机的IP地址</p>
+<p><img src="/image/Soft-RoCE%E9%83%A8%E7%BD%B2%E5%8F%8A%E9%80%9A%E4%BF%A1%E6%B5%8B%E8%AF%95/IMG-20260515105611829.png" srcset="/img/loading.gif" lazyload alt="IMG-20260515105611829"></p>
+<p>查看两台虚拟机IP地址</p>
+<p><img src="/image/Soft-RoCE%E9%83%A8%E7%BD%B2%E5%8F%8A%E9%80%9A%E4%BF%A1%E6%B5%8B%E8%AF%95/IMG-20260515105611782.png" srcset="/img/loading.gif" lazyload alt="IMG-20260515105611782"></p>
+<p><img src="/image/Soft-RoCE%E9%83%A8%E7%BD%B2%E5%8F%8A%E9%80%9A%E4%BF%A1%E6%B5%8B%E8%AF%95/IMG-20260515105611767.png" srcset="/img/loading.gif" lazyload alt="IMG-20260515105611767"></p>
+<p>查看Windows主机虚拟网卡IP地址：</p>
+<p><img src="/image/Soft-RoCE%E9%83%A8%E7%BD%B2%E5%8F%8A%E9%80%9A%E4%BF%A1%E6%B5%8B%E8%AF%95/IMG-20260515105611736.png" srcset="/img/loading.gif" lazyload alt="IMG-20260515105611736"></p>
+<p>这里需要注意如果没在同一网段的话需要更改虚拟机网阔模式为自定义，自定义i选择虚拟网卡</p>
+<p>查看两台虚拟机与Windows主机网络连通性</p>
+<p><img src="/image/Soft-RoCE%E9%83%A8%E7%BD%B2%E5%8F%8A%E9%80%9A%E4%BF%A1%E6%B5%8B%E8%AF%95/IMG-20260515105611752.png" srcset="/img/loading.gif" lazyload alt="IMG-20260515105611752"></p>
+<p><img src="/image/Soft-RoCE%E9%83%A8%E7%BD%B2%E5%8F%8A%E9%80%9A%E4%BF%A1%E6%B5%8B%E8%AF%95/IMG-20260515105611724.png" srcset="/img/loading.gif" lazyload alt="IMG-20260515105611724"></p>
+<h2 id="配置RXE网卡"><a href="#配置RXE网卡" class="headerlink" title="配置RXE网卡"></a>配置RXE网卡</h2><p>加载内核驱动，modprobe会自动加载其他驱动。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo modprobe rdma_rxe<br></code></pre></td></tr></table></figure>
+
+<p>用户态配置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo rdma <span class="hljs-built_in">link</span> add rxe0 <span class="hljs-built_in">type</span> rxe netdev ens33<br></code></pre></td></tr></table></figure>
+
+<p>注意这里的rxe_0是RDMA的设备名，可任意取名，ens33为虚拟机的网络设备名，可在 <a href="#%E9%85%8D%E7%BD%AE%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%BC%8F">配置网络模式</a> 步骤查看，每个虚拟机可能存在差异</p>
+<p>使用ibv_devices查看设备列表</p>
+<p><img src="/image/Soft-RoCE%E9%83%A8%E7%BD%B2%E5%8F%8A%E9%80%9A%E4%BF%A1%E6%B5%8B%E8%AF%95/IMG-20260515105611709.png" srcset="/img/loading.gif" lazyload alt="IMG-20260515105611709"></p>
+<p>查看虚拟RDMA设备简略信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">ibv_devinfo -d &lt;网卡名称&gt;<br></code></pre></td></tr></table></figure>
+
+<p><img src="/image/Soft-RoCE%E9%83%A8%E7%BD%B2%E5%8F%8A%E9%80%9A%E4%BF%A1%E6%B5%8B%E8%AF%95/IMG-20260515105611695.png" srcset="/img/loading.gif" lazyload alt="IMG-20260515105611695"></p>
+<p>注意：步骤配置RXE网卡，两台虚拟机都需要完成。</p>
+<h1 id="其他相关命令"><a href="#其他相关命令" class="headerlink" title="其他相关命令"></a>其他相关命令</h1><h2 id="删除RDMA内核模块"><a href="#删除RDMA内核模块" class="headerlink" title="删除RDMA内核模块"></a>删除RDMA内核模块</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo rdma <span class="hljs-built_in">link</span> delete &lt;rxe name&gt;<br></code></pre></td></tr></table></figure>
+
+<p>其中rxe name为ibv_devices显示的rxe设备名称</p>
+<h2 id="查看RDMA连接状态"><a href="#查看RDMA连接状态" class="headerlink" title="查看RDMA连接状态"></a>查看RDMA连接状态</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">rdma <span class="hljs-built_in">link</span> show<br></code></pre></td></tr></table></figure>
+
+<h2 id="更改MTU包大小"><a href="#更改MTU包大小" class="headerlink" title="更改MTU包大小"></a>更改MTU包大小</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo ifconfig &lt;网卡名称&gt; mtu &lt;MTU包大小&gt;<br></code></pre></td></tr></table></figure>
+
+<h2 id="显示所有RDMA网口的所有信息"><a href="#显示所有RDMA网口的所有信息" class="headerlink" title="显示所有RDMA网口的所有信息"></a>显示所有RDMA网口的所有信息</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">ibv_devinfo -v<br></code></pre></td></tr></table></figure>
+
+<h2 id="查看链路类型"><a href="#查看链路类型" class="headerlink" title="查看链路类型"></a>查看链路类型</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">ibstat<br></code></pre></td></tr></table></figure>
+
+<h2 id="查看网络中infiniband设备"><a href="#查看网络中infiniband设备" class="headerlink" title="查看网络中infiniband设备"></a>查看网络中infiniband设备</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">ibnodes<br></code></pre></td></tr></table></figure>
+
+<h2 id="验证端到端-RDMA-通讯是否在用户空间应用程序中正常工作"><a href="#验证端到端-RDMA-通讯是否在用户空间应用程序中正常工作" class="headerlink" title="验证端到端 RDMA 通讯是否在用户空间应用程序中正常工作"></a>验证端到端 RDMA 通讯是否在用户空间应用程序中正常工作</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo apt install infiniband-diags<br></code></pre></td></tr></table></figure>
+
+<p>server</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">ibping -S -C mlx4_0 -P 1<br></code></pre></td></tr></table></figure>
+
+<p>client</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">ibping -c 10000 -f -C mlx4_0 -P 1 -L 49<br></code></pre></td></tr></table></figure>
+
+<h2 id="rping"><a href="#rping" class="headerlink" title="rping"></a>rping</h2><p>rping是RDMA的一个示例程序，属于RDMA连接管理库librdmacm。可用于测试两个RDMA节点间的连通性。</p>
+<p>rping是一个工具，包含在 librdmacm-utils中，并发送 RDMA 流量。rping与所有 RDMA 驱动的协议（InfiniBand、RoCE 和 iWARP）相关。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo apt install rdmacm-utils<br></code></pre></td></tr></table></figure>
+
+<p>server</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs bash">eddy@eddy:~$ rping -s -v -P<br>server ping data: rdma-ping-0: ABCDEFGHIJKLMNOP<br>server ping data: rdma-ping-1: BCDEFGHIJKLMNOPQ<br>server ping data: rdma-ping-2: CDEFGHIJKLMNOPQR<br>server ping data: rdma-ping-3: DEFGHIJKLMNOPQRS<br>server ping data: rdma-ping-4: EFGHIJKLMNOPQRST<br>server ping data: rdma-ping-5: FGHIJKLMNOPQRSTU<br>server ping data: rdma-ping-6: GHIJKLMNOPQRSTUV<br>server ping data: rdma-ping-7: HIJKLMNOPQRSTUVW<br>server ping data: rdma-ping-8: IJKLMNOPQRSTUVWX<br>server ping data: rdma-ping-9: JKLMNOPQRSTUVWXY<br>eddy@eddy:~$ <br></code></pre></td></tr></table></figure>
+
+<p>client</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs bash">eddy@eddy:~$ rping -c -a 192.168.159.131 -C 10 -v -S 30<br>ping data: rdma-ping-0: ABCDEFGHIJKLMNOP<br>ping data: rdma-ping-1: BCDEFGHIJKLMNOPQ<br>ping data: rdma-ping-2: CDEFGHIJKLMNOPQR<br>ping data: rdma-ping-3: DEFGHIJKLMNOPQRS<br>ping data: rdma-ping-4: EFGHIJKLMNOPQRST<br>ping data: rdma-ping-5: FGHIJKLMNOPQRSTU<br>ping data: rdma-ping-6: GHIJKLMNOPQRSTUV<br>ping data: rdma-ping-7: HIJKLMNOPQRSTUVW<br>ping data: rdma-ping-8: IJKLMNOPQRSTUVWX<br>ping data: rdma-ping-9: JKLMNOPQRSTUVWXY<br>eddy@eddy:~$ <br></code></pre></td></tr></table></figure>
+
+<h1 id="使用SoftRoCE和Wireshark对RoCEv2数据包进行抓取"><a href="#使用SoftRoCE和Wireshark对RoCEv2数据包进行抓取" class="headerlink" title="使用SoftRoCE和Wireshark对RoCEv2数据包进行抓取"></a>使用SoftRoCE和Wireshark对RoCEv2数据包进行抓取</h1><h2 id="普通网卡环境"><a href="#普通网卡环境" class="headerlink" title="普通网卡环境"></a>普通网卡环境</h2><p>根据 <a href="#Soft-RoCE%E9%83%A8%E7%BD%B2">Soft-RoCE部署</a> 配置好环境直接启动wireshark即可抓取；</p>
+<p>示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo modprobe rdma_rxe<br>sudo rdma <span class="hljs-built_in">link</span> add rxe0 <span class="hljs-built_in">type</span> rxe netdev ens33<br>ibv_devices<br>sudo wireshark<br></code></pre></td></tr></table></figure>
+<h2 id="CX5网卡环境"><a href="#CX5网卡环境" class="headerlink" title="CX5网卡环境"></a>CX5网卡环境</h2><p>根据 <a href="#Soft-RoCE%E9%83%A8%E7%BD%B2">Soft-RoCE部署</a> 配置好环境；</p>
+<p>卸载 <code>mlx5_core</code> 驱动：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo rmmod mlx5_core<br></code></pre></td></tr></table></figure>
+
+<p>加载 <code>rdma_rxe</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo modprobe rdma_rxe<br></code></pre></td></tr></table></figure>
+
+<p>将CX5网卡绑定至 Soft-RoCE：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 注意替换&lt;&gt;内容</span><br>sudo rdma <span class="hljs-built_in">link</span> add rxe0 <span class="hljs-built_in">type</span> rxe netdev &lt;待抓取RoCE数据包的网口名称&gt;<br></code></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo rmmod mlx5_core<br>sudo modprobe rdma_rxe<br>sudo rdma <span class="hljs-built_in">link</span> add rxe0 <span class="hljs-built_in">type</span> rxe netdev ens6f0np0<br>ibv_devices<br>sudo wireshark<br></code></pre></td></tr></table></figure>
+
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/bandaoyu/article/details/115798045">【RDMA】RDMA通信测试工具|perftest_bandaoyu的博客-CSDN博客_rdma测试</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/bandaoyu/article/details/115798045">【RDMA】RDMA通信测试工具|perftest_bandaoyu的博客-CSDN博客_rdma测试</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_38158479/article/details/123990999">RDMA Soft-RoCE实验操作</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/361740115">15. RDMA之RoCE &amp; Soft-RoCE - 知乎 (zhihu.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Mb4y1b74b/?spm_id_from=333.337.search-card.all.click">Soft-ROCE的简单实验</a></p>
+<p><a target="_blank" rel="noopener" href="https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/8/html-single/configuring_infiniband_and_rdma_networks/index#configuring-soft-roce_configuring-roce">配置 InfiniBand 和 RDMA 网络 Red Hat Enterprise Linux 8 | Red Hat Customer Portal</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/xsx_6361/article/details/111151788">SoftRoCE实践</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.oracle.com/cd/E19632-01/835-0783-03/bbgdebai.html#scrolltoc">Understanding InfiniBand Software Commands - Sun Datacenter InfiniBand Switch 648 Topic Set (oracle.com)</a> Infiniband软件命令及解析。</p>
+<p><a target="_blank" rel="noopener" href="https://manpages.ubuntu.com/manpages/focal/man8/rdma-link.8.html">Ubuntu Manpage: rdma-link - rdma link configuration</a> rdma-link - rdma 链接配置。</p>
+<p><a target="_blank" rel="noopener" href="https://mymellanox.force.com/mellanoxcommunity/s/article/How-To-Enable-Verify-and-Troubleshoot-RDMA">How To Enable, Verify and Troubleshoot RDMA (force.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://runsisi.com/2021/02/21/soft-roce/">Soft-RoCE | Runsisi’s Blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/xsx_6361/article/details/111151788"> SoftRoCE实践_迷之印记的博客-CSDN博客_soft-rdma perftest</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/ljlfather/category_9476125.html">RDMA，InfiniBand_郑泽林的博客-CSDN博客</a></p>
+<p>[<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/40775339">RDMA] RDMA 初步使用操作 - 知乎 (zhihu.com)</a> ibping测试RDMA</p>
+<p><a target="_blank" rel="noopener" href="http://joyxu.github.io/2020/12/24/soft-roce/">使用QEMU测试soft roce | 记录成长的痕迹 (joyxu.github.io)</a></p>
+<p>🎈</p>
+<p>🧨</p>
+<p>🎉</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/RDMA/" class="category-chain-item">RDMA</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/RDMA/">#RDMA</a>
+      
+        <a href="/tags/Soft-RoCE/">#Soft-RoCE</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Soft-RoCE部署及通信测试</div>
+      <div>http://example.com/2026/05/15/RDMA/Soft-RoCE部署及通信测试/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Oxley</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年5月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/05/15/Embedded/RDMA/Soft-RoCE%E9%83%A8%E7%BD%B2%E5%8F%8A%E9%80%9A%E4%BF%A1%E6%B5%8B%E8%AF%95/" title="Soft-RoCE部署及通信测试">
+                        <span class="hidden-mobile">Soft-RoCE部署及通信测试</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="waline"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#waline', function() {
+      Fluid.utils.createCssLink('https://lib.baomitu.com/waline/2.14.1/waline.min.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/waline/2.14.1/waline.min.js', function() {
+        var options = Object.assign(
+          {"serverURL":"https://waline-comments-lh9l5ftj7-eddyvv.vercel.app/","path":"window.location.pathname","meta":["nick","mail","link"],"requiredMeta":["nick"],"lang":"zh-CN","emoji":["https://cdn.jsdelivr.net/gh/walinejs/emojis/weibo"],"dark":"html[data-user-color-scheme=\"dark\"]","wordLimit":0,"pageSize":10},
+          {
+            el: '#waline',
+            path: window.location.pathname
+          }
+        )
+        Waline.init(options);
+        Fluid.utils.waitElementVisible('#waline .vcontent', () => {
+          var imgSelector = '#waline .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> <div style="font-size: 0.85rem"> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

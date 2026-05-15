@@ -1,0 +1,830 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/zipper-mouth_face_3d.png">
+  <link rel="icon" href="/img/zipper-mouth_face_3d.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Oxley">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="DPDK及其上层应用的安装使用DPDK是Intel公司开发的一款高性能的网络驱动组件，旨在为数据面应用程序提供一个简单方便的，完整的，快速的数据包处理解决方案，主要技术有用户态、轮询取代中断、零拷贝、网卡RSS、访存DirectIO等。 DPDK安装DPDK需要根据系统版本选择，版本的选择可查看DPDK官方文档，由于当前内核为Ubuntu20.04.5故选用dpdk版本为20.11版本，文档中也提">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DPDK及其上层应用的安装使用">
+<meta property="og:url" content="http://example.com/2023/09/22/Linux/Linux%E5%B7%A5%E5%85%B7/DPDK%E5%8F%8A%E5%85%B6%E4%B8%8A%E5%B1%82%E5%BA%94%E7%94%A8%E7%9A%84%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="凛冬将至">
+<meta property="og:description" content="DPDK及其上层应用的安装使用DPDK是Intel公司开发的一款高性能的网络驱动组件，旨在为数据面应用程序提供一个简单方便的，完整的，快速的数据包处理解决方案，主要技术有用户态、轮询取代中断、零拷贝、网卡RSS、访存DirectIO等。 DPDK安装DPDK需要根据系统版本选择，版本的选择可查看DPDK官方文档，由于当前内核为Ubuntu20.04.5故选用dpdk版本为20.11版本，文档中也提">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/image/cover/dahlia-8222054_1920.jpg">
+<meta property="article:published_time" content="2023-09-22T06:39:17.000Z">
+<meta property="article:modified_time" content="2023-09-22T06:42:35.359Z">
+<meta property="article:author" content="Oxley">
+<meta property="article:tag" content="DPDK">
+<meta property="article:tag" content="TestPMD">
+<meta property="article:tag" content="pktgen-dpdk">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/image/cover/dahlia-8222054_1920.jpg">
+  
+  
+  
+  <title>DPDK及其上层应用的安装使用 - 凛冬将至</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":90,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"appId":"UeFj0nSPOcD3JQcbVPIsrisJ-MdYXbMMI","appKey":"cNI2q6S4vqA3QtbX0FbIndWx","server_url":null,"path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Oxley&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/images/sky-clouds-sunlight-dark-e3e45ad8c5ae22995c2fd77a994dfc61.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="DPDK及其上层应用的安装使用"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-09-22 14:39" pubdate>
+          2023年9月22日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          61 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">DPDK及其上层应用的安装使用</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：2023年9月22日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="DPDK及其上层应用的安装使用"><a href="#DPDK及其上层应用的安装使用" class="headerlink" title="DPDK及其上层应用的安装使用"></a>DPDK及其上层应用的安装使用</h1><p>DPDK是Intel公司开发的一款高性能的网络驱动组件，旨在为数据面应用程序提供一个简单方便的，完整的，快速的数据包处理解决方案，主要技术有用户态、轮询取代中断、零拷贝、网卡RSS、访存DirectIO等。</p>
+<h2 id="DPDK"><a href="#DPDK" class="headerlink" title="DPDK"></a>DPDK</h2><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>DPDK需要根据系统版本选择，版本的选择可查看<a target="_blank" rel="noopener" href="https://doc.dpdk.org/guides/index.html">DPDK官方文档</a>，由于当前内核为<code>Ubuntu20.04.5</code>故选用dpdk版本为20.11版本，文档中也提供相应的安装方式。</p>
+<p>软件包</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ sudo apt-get install meson<br>$ sudo apt-get install python3-pyelftools<br>$ sudo apt-get install pkg-config<br></code></pre></td></tr></table></figure>
+
+<p>安装步骤</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ git <span class="hljs-built_in">clone</span> git://dpdk.org/dpdk-stable<br>$ <span class="hljs-built_in">cd</span> dpdk-stable<br>$ git checkout 20.11<br>$ meson build<br>$ <span class="hljs-built_in">cd</span> build<br>$ ninja<br>$ ninja install<br></code></pre></td></tr></table></figure>
+
+<p>检查是否安装成功：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ pkg-config --modversion libdpdk<br>20.11.2<br></code></pre></td></tr></table></figure>
+
+<p><code>dpdk-20.11</code> 默认会编译 app 目录下的所有应用，比如 testpmd，编译完成后生成的可执行文件在 <code>./build/app</code> 目录下面：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ <span class="hljs-built_in">ls</span> -l build/app<br>...<br>-rwxr-xr-x 1 root root 16949456 12月 13 09:56 dpdk-pdump<br>-rwxr-xr-x 1 root root 16950176 12月 13 09:56 dpdk-proc-info<br>-rwxr-xr-x 1 root root 16949984 12月 13 09:56 dpdk-test-acl<br>-rwxr-xr-x 1 root root 17088760 12月 13 09:56 dpdk-test-bbdev<br>-rwxr-xr-x 1 root root 16950688 12月 13 09:56 dpdk-test-cmdline<br>-rwxr-xr-x 1 root root 16984424 12月 13 09:56 dpdk-test-compress-perf<br>-rwxr-xr-x 1 root root 17024104 12月 13 09:56 dpdk-test-crypto-perf<br>-rwxr-xr-x 1 root root 17058480 12月 13 09:56 dpdk-test-eventdev<br>-rwxr-xr-x 1 root root 16949448 12月 13 09:56 dpdk-test-fib<br>-rwxr-xr-x 1 root root 16970928 12月 13 09:56 dpdk-test-flow-perf<br>-rwxr-xr-x 1 root root 16965288 12月 13 09:56 dpdk-test-pipeline<br>-rwxr-xr-x 1 root root 17826888 12月 13 09:56 dpdk-testpmd<br>-rwxr-xr-x 1 root root 16948944 12月 13 09:56 dpdk-test-regex<br>-rwxr-xr-x 1 root root 16948936 12月 13 09:56 dpdk-test-sad<br>...<br></code></pre></td></tr></table></figure>
+
+<h3 id="相关命令"><a href="#相关命令" class="headerlink" title="相关命令"></a>相关命令</h3><p>查看网卡绑定情况</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">./dpdk-stable-20.11.9/usertools/dpdk-devbind.py -s<br></code></pre></td></tr></table></figure>
+
+<p><img src="/image/DPDK%E5%8F%8A%E5%85%B6%E4%B8%8A%E5%B1%82%E5%BA%94%E7%94%A8%E7%9A%84%E4%BD%BF%E7%94%A8/image-20230921134405249.png#pic_center" srcset="/img/loading.gif" lazyload alt="image-20230921134405249"></p>
+<h2 id="TestPMD安装使用"><a href="#TestPMD安装使用" class="headerlink" title="TestPMD安装使用"></a>TestPMD安装使用</h2><p>TestPMD是一个使用DPDK软件包分发的参考应用程序。其主要目的是在网络接口的以太网端口之间转发数据包。</p>
+<p><img src="/image/DPDK%E5%8F%8A%E5%85%B6%E4%B8%8A%E5%B1%82%E5%BA%94%E7%94%A8%E7%9A%84%E4%BD%BF%E7%94%A8/image-20230921134040659.png" srcset="/img/loading.gif" lazyload alt="image-20230921134040659"></p>
+<h3 id="编译igb-uio驱动"><a href="#编译igb-uio驱动" class="headerlink" title="编译igb_uio驱动"></a>编译igb_uio驱动</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ git <span class="hljs-built_in">clone</span> http://dpdk.org/git/dpdk-kmods<br>$ <span class="hljs-built_in">cd</span> dpdk-kmods/linux/igb_uio<br>$ make<br></code></pre></td></tr></table></figure>
+
+<h3 id="加载uio、igb-uio"><a href="#加载uio、igb-uio" class="headerlink" title="加载uio、igb_uio"></a>加载uio、igb_uio</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ modprobe uio<br>$ insmod ./dpdk-kmods/linux/igb_uio/igb_uio.ko intr_mode=legacy<br></code></pre></td></tr></table></figure>
+
+<h3 id="配置大页内存"><a href="#配置大页内存" class="headerlink" title="配置大页内存"></a>配置大页内存</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ <span class="hljs-built_in">echo</span> 512  &gt;  /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages<br></code></pre></td></tr></table></figure>
+
+<h3 id="运行TestPMD"><a href="#运行TestPMD" class="headerlink" title="运行TestPMD"></a>运行TestPMD</h3><h4 id="网卡驱动绑定至igb-uio"><a href="#网卡驱动绑定至igb-uio" class="headerlink" title="网卡驱动绑定至igb_uio"></a>网卡驱动绑定至igb_uio</h4><p>注意：Mellanox网卡不需要绑定可以直接检测到设备，其他网卡需要进行绑定。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ ifconfig ens33 down<br>$ ifconfig ens34 down<br>$ dpdk-devbind.py -b igb_uio &lt;网卡名称 or 网卡的BDF号&gt;<br></code></pre></td></tr></table></figure>
+
+<h4 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ <span class="hljs-built_in">cd</span> dpdk-stable-21.11.2/build/app/<br>$ sudo ./dpdk-testpmd -l 0-3 -n 4 -- -i --portmask=0x3 --nb-cores=2<br></code></pre></td></tr></table></figure>
+
+<p><img src="/image/DPDK%E5%8F%8A%E5%85%B6%E4%B8%8A%E5%B1%82%E5%BA%94%E7%94%A8%E7%9A%84%E4%BD%BF%E7%94%A8/image-20230921113227538.png" srcset="/img/loading.gif" lazyload alt="image-20230921113227538"></p>
+<p><code>-l </code>参数用来设置用到的逻辑核。0核用来管理命令行，1、2核用来转发数据包。<code>-n</code> 参数用来指定使用的内存通道数。–（破折号）分开了EAL参数和应用程序参数。端口掩码指定使用的网卡端口。<code>--nb-cores</code>用来指定两个核作为数据的转发。</p>
+<h4 id="解绑"><a href="#解绑" class="headerlink" title="解绑"></a>解绑</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ lspci | grep Eth<br>$ dpdk-devbind.py -u 02:02.0 02:03.0<br>$ modprobe e1000<br>$ ./dpdk-stable-20.11.9/usertools/dpdk-devbind.py -b e1000 0000:02:01.0<br>$ ifconfig ens33 up<br>$ ifconfig ens34 up<br></code></pre></td></tr></table></figure>
+
+<h3 id="TestPMD的相关使用"><a href="#TestPMD的相关使用" class="headerlink" title="TestPMD的相关使用"></a>TestPMD的相关使用</h3><h4 id="启动转发"><a href="#启动转发" class="headerlink" title="启动转发"></a>启动转发</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ testpmd&gt; start<br></code></pre></td></tr></table></figure>
+
+<h4 id="停止转发"><a href="#停止转发" class="headerlink" title="停止转发"></a>停止转发</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ testpmd&gt; stop<br></code></pre></td></tr></table></figure>
+
+<h4 id="查看当前所有在用端口的相关统计"><a href="#查看当前所有在用端口的相关统计" class="headerlink" title="查看当前所有在用端口的相关统计"></a>查看当前所有在用端口的相关统计</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ testpmd&gt; show port stats all<br></code></pre></td></tr></table></figure>
+
+<h4 id="查看port信息"><a href="#查看port信息" class="headerlink" title="查看port信息"></a>查看port信息</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ testpmd&gt; show port info 0<br></code></pre></td></tr></table></figure>
+
+<h4 id="使用多核"><a href="#使用多核" class="headerlink" title="使用多核"></a>使用多核</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash">testpmd&gt; <span class="hljs-built_in">set</span> nbcore 2<br><br>testpmd&gt; show config fwd<br><br>io packet forwarding - ports=2 - cores=2 - streams=2 NUMA support disabled, MP over anonymous pages disabled<br>Logical Core 13 (socket 1) forwards packets on 1 streams:P=0/Q=0 (socket 0) -&gt; TX P=1/Q=0 (socket 0) peer=02:00:00:00:00:01<br>Logical Core 14 (socket 1) forwards packets on 1 streams:P=1/Q=0 (socket 0) -&gt; TX P=0/Q=0 (socket 0) peer=02:00:00:00:00:00<br></code></pre></td></tr></table></figure>
+
+<h4 id="更改转发模式"><a href="#更改转发模式" class="headerlink" title="更改转发模式"></a>更改转发模式</h4><p><a target="_blank" rel="noopener" href="http://doc.dpdk.org/guides/testpmd_app_ug/testpmd_funcs.html#set-fwd">TestPMD 的转发模式</a>包括：</p>
+<ul>
+<li><p><font color=red>io</font>（输入&#x2F;输出模式）：通常也被称为 IO 模式，是最常用的转发模式，也是 TestPMD 启动时的默认模式。在该模式下，CPU 从一个端口接收数据包（Rx），并将其发送到另一个端口（Tx）。如果需要的话，一个端口可同时用于接收和发送。</p>
+</li>
+<li><p><font color=red>rxonly</font>（收包模式）：在此模式下，TestPMD 会轮询 Rx 端口的数据包，然后直接释放而不发送，以这种方式充当数据包接收器。</p>
+</li>
+<li><p><font color=red>txonly</font>（发包模式）：在此模式下，TestPMD 生成 64Byte 的 IP 数据包，并从 Tx 端口发送出去。不接收数据包，仅作为数据包的发送源。</p>
+</li>
+<li><p><font color=red>mac</font>：在转发报文前修改报文的 src MAC 地址和 dst MAC 地址。默认的行为是将 src MAC 地址设置为转发接口的 MAC 地址，将 dst MAC 地址设置为预设的 MAC 地址，可以通过 eth-peer 或 eth-peers-configfile 命令参数，在程序启动时配置预设 MAC 地址。目前还不支持对 src MAC 地址进行预设。</p>
+</li>
+<li><p><font color=red>macswap</font>：MAC 交换转发模式，在转发报文之前交换报文的 src MAC 地址和 dst MAC 地址。</p>
+</li>
+<li><p><font color=red>flowgen</font>：多数据流生成模式，根据不同的 dst IP 地址生成一组数据流，同时终结接收到的流量。</p>
+</li>
+<li><p><font color=red>csum</font>：根据报文的 offload 标记，通过硬件或软件方法修改报文的 checksum 字段。</p>
+</li>
+<li><p><font color=red>icmpecho</font>：接收一组报文，查找是否有 ICMP echo 请求，如果有，就回应 ICMP echo reply。</p>
+</li>
+<li><p><font color=red>ieee1588</font>：演示对 Rx 和 Tx 基于 L2 IEEE1588 V2 PTP 时间同步特性，需要配置 CONFIG_RTE_LIBRTE_IEEE1588&#x3D;y。</p>
+</li>
+<li><p><font color=red>5tswap</font>：交换L2，L3，L4的源和目的地 (如果存在)。</p>
+<p>​				L2交换以太网的源地址和目的地址，与macswap相同。</p>
+<p>​				L3交换IP (v4和v6) 的源地址和目的地址。</p>
+<p>​				L4交换传输层的源端口和目的端口 (TCP和UDP)。</p>
+</li>
+<li><p><font color=red>shared-rxq</font>：仅接收共享Rx队列。从<code>mbuf</code>中解析数据包源端口，并相应地更新流统计信息。</p>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">testpmd&gt; <span class="hljs-built_in">set</span> fwd rxonly<br>testpmd&gt; start<br></code></pre></td></tr></table></figure>
+
+<h4 id="检查转发配置"><a href="#检查转发配置" class="headerlink" title="检查转发配置"></a>检查转发配置</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ testpmd&gt; show config fwd<br></code></pre></td></tr></table></figure>
+
+<p><img src="/image/DPDK%E5%8F%8A%E5%85%B6%E4%B8%8A%E5%B1%82%E5%BA%94%E7%94%A8%E7%9A%84%E4%BD%BF%E7%94%A8/image-20230921113320721.png" srcset="/img/loading.gif" lazyload alt="image-20230921113320721"></p>
+<p>表明 TestPMD 正使用默认的 IO 转发模式，<code>logical Core 1</code> 将对<code>Port 0</code>接收到的数据包转发到<code>Port 1</code>上发送出去；</p>
+<h3 id="pktgen-dpdk"><a href="#pktgen-dpdk" class="headerlink" title="pktgen-dpdk"></a>pktgen-dpdk</h3><p>DPDK-Pktgen其实就是DPDK的一个应用，它类似于linux原生的pktgen，通过自己构造数据包，然后发送。而DPDK-Pktgen做的更强大，他可以通过用lua脚本或者json编辑自己的测试过程，同时输出自己关心的数据，比如发送，接收的数据包数量，流量带宽等等。</p>
+<h4 id="安装-1"><a href="#安装-1" class="headerlink" title="安装"></a>安装</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ git <span class="hljs-built_in">clone</span> git://dpdk.org/apps/pktgen-dpdk<br>$ <span class="hljs-built_in">cd</span> pktgen-dpdk<br>$ git checkout pktgen-21.03.1<br>$ meson build<br>$ <span class="hljs-built_in">cd</span> build<br>$ ninja<br>$ <span class="hljs-built_in">ls</span> -l app/pktgen  //编译出来的可执行程序<br>-rwxr-xr-x 1 root root 477672 10月 19 12:59 app/pktgen<br></code></pre></td></tr></table></figure>
+
+<h5 id="基本使用方法"><a href="#基本使用方法" class="headerlink" title="基本使用方法"></a>基本使用方法</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">Usage: ./app/pktgen [EAL options] -- [-h] [-v] [-P] [-G] [-T] [-f cmd_file] [-l log_file] [-s P:PCAP_file] [-m &lt;string&gt;]<br></code></pre></td></tr></table></figure>
+
+<p>pktgen 支持的命令行参数还是挺多的，具体可以通过 pktgen –help 来详细查看。不过它像大多数基于 dpdk 的测试程序一样，命令行参数主要有两部分组成：</p>
+<ul>
+<li><a href="!%5Bimage-20230921164303167%5D(image/DPDK%E5%8F%8A%E5%85%B6%E4%B8%8A%E5%B1%82%E5%BA%94%E7%94%A8%E7%9A%84%E4%BD%BF%E7%94%A8/image-20230921164303167.png)">EAL options</a></li>
+<li>pktgen 自有参数</li>
+</ul>
+<p>其中，最重要的一个参数就是 -l 参数，用它来指定使用的核列表，比如：-l 1,2 或者 -l 1-2，表示使用核 1 和核 2。值得注意的是，pktgen 至少要指定两个核，因为 pktgen 需要一个核与用户进行交互，比如响应测试过程中用户的输入。</p>
+<p>pktgen 自有参数部分最重要的是 -m 参数，用它来指定网口与核之间的对应关系，比如：-m 2.0，表示让核 2 来处理网口 0。值得注意的是，若要指定多个对应关系（使用多个网卡和多个核），则需多次使用 -m 参数。如果要收包，最好也指定一下 -P 参数，表示让所有网口进入混杂模式，以便接收到所有数据包。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">./build/app/pktgen -l 1-3 -- -P -m 2.0 -m 3.1<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash">Pktgen:/&gt; <span class="hljs-built_in">set</span> 0 size 64 // 将网口 0 所发包的帧大小设置 64 字节<br>Pktgen:/&gt; <span class="hljs-built_in">set</span> 0 src ip 192.168.0.1/32 // 将网口 0 所发包的源 IP 设置为 192.168.0.1<br>Pktgen:/&gt; <span class="hljs-built_in">set</span> 0 dst ip 192.168.0.2 // 将网口 0 所发包的目的 IP 设置为 192.168.0.2<br>Pktgen:/&gt; <span class="hljs-built_in">set</span> 0 count 100000000  // 将网口 0 的发包数设置为 100000000<br>Pktgen:/&gt; <span class="hljs-built_in">set</span> 0 rate 20 // 将网口 0 的发包速率设置为最大速率的 20%<br>Pktgen:/&gt; start 0 // 启动网口 0 的发包过程<br>Pktgen:/&gt; stop 0 // 停止网口 0 的发包过程<br>Pktgen:/&gt; stp // 停止所有网口的发包过程<br>Pktgen:/&gt; clr // 清除屏幕上的收发包统计信息<br>Pktgen:/&gt; quit // 退出 pktgen 程序<br></code></pre></td></tr></table></figure>
+
+<h4 id="常见错误"><a href="#常见错误" class="headerlink" title="常见错误"></a>常见错误</h4><h5 id="ERROR-Dependency-“libdpdk”-not-found"><a href="#ERROR-Dependency-“libdpdk”-not-found" class="headerlink" title="ERROR: Dependency “libdpdk” not found"></a>ERROR: Dependency “libdpdk” not found</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">Found pkg-config: /usr/bin/pkg-config (1.4.2)<br>Found CMake: /usr/bin/cmake (3.18.2)<br>Run-time dependency libdpdk found: NO (tried pkgconfig and cmake)<br><br>meson.build:62:0: ERROR: Dependency <span class="hljs-string">&quot;libdpdk&quot;</span> not found, tried pkgconfig and cmake<br></code></pre></td></tr></table></figure>
+
+<p>显示没有找到dpdk相关的库，原因在于dpdk编译时生成的库并没有放入&#x2F;usr&#x2F;lib与&#x2F;lib中。dpdk相关的库数量非常多，如果直接拖动到这两个文件夹中，不方便管理。因此可以采用ld.so的方式进行类似”快捷方式”的连接，dpdk的库不需要移动位置就可以被其他的程序调用。</p>
+<p><strong>解决方法</strong>：重新安装dpdk</p>
+<h5 id="error-pcap-library-not-found"><a href="#error-pcap-library-not-found" class="headerlink" title="error: pcap library not found!"></a>error: pcap library not found!</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">app/meson.build:36:0: ERROR: C library <span class="hljs-string">&#x27;pcap&#x27;</span> not found<br></code></pre></td></tr></table></figure>
+
+<p>解决方法</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ sudo apt-get install libsqlite3-0 libpcap0.8<br>$ sudo apt-get install libpcap-dev<br></code></pre></td></tr></table></figure>
+
+<h5 id="Pogram-sphinx-build-found-NO"><a href="#Pogram-sphinx-build-found-NO" class="headerlink" title="Pogram sphinx-build found: NO"></a>Pogram sphinx-build found: NO</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">Pogram sphinx-build found: NO<br>Build targets <span class="hljs-keyword">in</span> project: 8<br></code></pre></td></tr></table></figure>
+
+<p>解决方法</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo apt-get install sphinx-doc sphinx-common<br></code></pre></td></tr></table></figure>
+
+<h5 id="librte-kvargs-so-21-cannot-open-shared-object-file-No-such-file-or-directory"><a href="#librte-kvargs-so-21-cannot-open-shared-object-file-No-such-file-or-directory" class="headerlink" title="librte_kvargs.so.21: cannot open shared object file: No such file or directory"></a>librte_kvargs.so.21: cannot open shared object file: No such file or directory</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">./app/pktgen: error <span class="hljs-keyword">while</span> loading shared libraries: librte_kvargs.so.21: cannot open shared object file: No such file or directory<br></code></pre></td></tr></table></figure>
+
+<p>解决方法</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ find ./ -name librte_kvargs.so.21<br>./dpdk-stable-20.11.9/build/lib/librte_kvargs.so.21<br>$ sudo <span class="hljs-built_in">ln</span> -s ./dpdk-stable-20.11.9/build/lib/librte_kvargs.so.21 /usr/local/lib/librte_kvargs.so.21<br>$ ldconfig -v<br></code></pre></td></tr></table></figure>
+
+<h3 id="DPDK日志系统"><a href="#DPDK日志系统" class="headerlink" title="DPDK日志系统"></a>DPDK日志系统</h3><p>根据日志的优先级高低， DPDK将日志分为 8 个级别（宏定义如下）。 数字越小级别越高， 其中<code>RTE_LOG_DEBUG</code>的值为 8, 这是日志的最低级别， 意味着输出的日志信息最多，因为高于这个级别的日志的信息都会被输出；相应地， <code>RTE_LOG_EMERG</code> 为日志的最高级别，只输出严重错误的信息 。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/* Can&#x27;t use 0, as it gives compiler warnings */</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> RTE_LOG_EMERG    1U  <span class="hljs-comment">/**&lt; System is unusable.               */</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> RTE_LOG_ALERT    2U  <span class="hljs-comment">/**&lt; Action must be taken immediately. */</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> RTE_LOG_CRIT     3U  <span class="hljs-comment">/**&lt; Critical conditions.              */</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> RTE_LOG_ERR      4U  <span class="hljs-comment">/**&lt; Error conditions.                 */</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> RTE_LOG_WARNING  5U  <span class="hljs-comment">/**&lt; Warning conditions.               */</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> RTE_LOG_NOTICE   6U  <span class="hljs-comment">/**&lt; Normal but significant condition. */</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> RTE_LOG_INFO     7U  <span class="hljs-comment">/**&lt; Informational.                    */</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> RTE_LOG_DEBUG    8U  <span class="hljs-comment">/**&lt; Debug-level messages.             */</span></span><br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ ./build/app/dpdktestpmd --log-level=<span class="hljs-string">&quot;pmd,net.mqnic.nint&quot;</span>:8 --log-level=8<br></code></pre></td></tr></table></figure>
+
+<p>命令中，带有命令选项<code>--log-level=&quot;pmd.net.mqnic.init&quot;:8</code> 的同时，还加上<code>--log-level=8</code>把<br>全局级别设置成了<code>RTE_LOG_CRIT (数字8) </code> 。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/cloudvtech/article/details/80359825">DPDK系列之二：pktgen-dpdk向testpmd发送数据的测试_cloudvtech的博客-CSDN博客</a></p>
+<h2 id="DPDK-1"><a href="#DPDK-1" class="headerlink" title="DPDK"></a>DPDK</h2><p><a target="_blank" rel="noopener" href="https://doc.dpdk.org/guides-17.11/tools/index.html">DPDK Tools User Guides — Data Plane Development Kit 17.11.10 documentation</a></p>
+<p><a target="_blank" rel="noopener" href="https://amperecomputing.com/zh-CN/tuning-guides/DPDK-setup-and-tuning-guide">DPDK 配置和优化指南 (amperecomputing.com)</a></p>
+<h2 id="TestPMD"><a href="#TestPMD" class="headerlink" title="TestPMD"></a>TestPMD</h2><p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/document/product/213/56300">云服务器 使用 DPDK 测试-最佳实践-文档中心-腾讯云 (tencent.com)</a> 包含使用TestPMD测试带宽及吞吐率。</p>
+<p><a target="_blank" rel="noopener" href="https://doc.dpdk.org/guides-17.11/testpmd_app_ug/index.html">Testpmd Application User Guide — Data Plane Development Kit 17.11.10 documentation (dpdk.org)</a> TestPMD官方手册</p>
+<h2 id="pktgen-dpdk-1"><a href="#pktgen-dpdk-1" class="headerlink" title="pktgen-dpdk"></a>pktgen-dpdk</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/choumin/article/details/120884509">dpdk-pktgen 的安装和基本使用-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://doc.dpdk.org/guides/linux_gsg/linux_eal_parameters.html">9. EAL parameters — Data Plane Development Kit 23.07.0 documentation (dpdk.org)</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Linux/" class="category-chain-item">Linux</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Linux/Linux%E5%B7%A5%E5%85%B7/" class="category-chain-item">Linux工具</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/DPDK/">#DPDK</a>
+      
+        <a href="/tags/TestPMD/">#TestPMD</a>
+      
+        <a href="/tags/pktgen-dpdk/">#pktgen-dpdk</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>DPDK及其上层应用的安装使用</div>
+      <div>http://example.com/2023/09/22/Linux/Linux工具/DPDK及其上层应用的安装使用/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Oxley</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年9月22日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/11/06/%E5%B7%A5%E5%85%B7%E8%BD%AF%E4%BB%B6/Hexo/Hexo%E6%96%87%E6%A1%A3%E4%B8%AD%E6%8F%92%E5%85%A5note%E6%8F%90%E7%A4%BA%E5%9D%97/" title="Hexo文档中插入note提示块">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Hexo文档中插入note提示块</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/09/21/Linux/Linux%E5%91%BD%E4%BB%A4/Linux%E5%91%BD%E4%BB%A4-nmcli/" title="Linux命令-nmcli">
+                        <span class="hidden-mobile">Linux命令-nmcli</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="waline"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#waline', function() {
+      Fluid.utils.createCssLink('https://lib.baomitu.com/waline/2.14.1/waline.min.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/waline/2.14.1/waline.min.js', function() {
+        var options = Object.assign(
+          {"serverURL":"https://waline-comments-lh9l5ftj7-eddyvv.vercel.app/","path":"window.location.pathname","meta":["nick","mail","link"],"requiredMeta":["nick"],"lang":"zh-CN","emoji":["https://cdn.jsdelivr.net/gh/walinejs/emojis/weibo"],"dark":"html[data-user-color-scheme=\"dark\"]","wordLimit":0,"pageSize":10},
+          {
+            el: '#waline',
+            path: window.location.pathname
+          }
+        )
+        Waline.init(options);
+        Fluid.utils.waitElementVisible('#waline .vcontent', () => {
+          var imgSelector = '#waline .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> <div style="font-size: 0.85rem"> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

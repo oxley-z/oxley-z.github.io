@@ -1,0 +1,901 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/zipper-mouth_face_3d.png">
+  <link rel="icon" href="/img/zipper-mouth_face_3d.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Oxley">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="内核pktgen使用什么是pktgenpktgen 是一款 Linux 发包工具，可在内核高速发包。由于pktgen是内核内置的，使用内核空间，所以它可以达到高带宽、高发包速率，以此更好地测试路由器、交换机和其他网络设备。 一旦加载pktgen模块后，会自动为每一个CPU创建一个内核线程[1]，并将该线程绑定在对应的CPU上。与此同时，在&#x2F;proc&#x2F;net&#x2F;pktgen&#x2F;目录下，为每一个线程创建一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux内核pktgen使用">
+<meta property="og:url" content="http://example.com/2023/09/21/Linux/Linux%E5%B7%A5%E5%85%B7/Linux%E5%86%85%E6%A0%B8pktgen%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="凛冬将至">
+<meta property="og:description" content="内核pktgen使用什么是pktgenpktgen 是一款 Linux 发包工具，可在内核高速发包。由于pktgen是内核内置的，使用内核空间，所以它可以达到高带宽、高发包速率，以此更好地测试路由器、交换机和其他网络设备。 一旦加载pktgen模块后，会自动为每一个CPU创建一个内核线程[1]，并将该线程绑定在对应的CPU上。与此同时，在&#x2F;proc&#x2F;net&#x2F;pktgen&#x2F;目录下，为每一个线程创建一">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/image/cover/city.jpg">
+<meta property="article:published_time" content="2023-09-21T08:50:01.000Z">
+<meta property="article:modified_time" content="2023-09-21T08:51:32.399Z">
+<meta property="article:author" content="Oxley">
+<meta property="article:tag" content="pktgen">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/image/cover/city.jpg">
+  
+  
+  
+  <title>Linux内核pktgen使用 - 凛冬将至</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":90,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"appId":"UeFj0nSPOcD3JQcbVPIsrisJ-MdYXbMMI","appKey":"cNI2q6S4vqA3QtbX0FbIndWx","server_url":null,"path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Oxley&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/images/sky-clouds-sunlight-dark-e3e45ad8c5ae22995c2fd77a994dfc61.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Linux内核pktgen使用"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-09-21 16:50" pubdate>
+          2023年9月21日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          37 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Linux内核pktgen使用</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：2023年9月21日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="内核pktgen使用"><a href="#内核pktgen使用" class="headerlink" title="内核pktgen使用"></a>内核pktgen使用</h1><h2 id="什么是pktgen"><a href="#什么是pktgen" class="headerlink" title="什么是pktgen"></a>什么是pktgen</h2><p>pktgen 是一款 Linux 发包工具，可在内核高速发包。由于<code>pktgen</code>是内核内置的，使用内核空间，所以它可以达到高带宽、高发包速率，以此更好地测试路由器、交换机和其他网络设备。</p>
+<p>一旦加载<code>pktgen</code>模块后，会自动为每一个CPU创建一个内核线程<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="注意：一个设备只能属于一个线程。">[1]</span></a></sup>，并将该线程绑定在对应的CPU上。与此同时，在<code>/proc/net/pktgen/</code>目录下，为每一个线程创建一个<code>kpktgend_X</code>文件（其中的X为CPU编号），用来控制和监控这些线程，以及一个<code>pgctrl</code>文件，用来控制<code>pktgen</code>程序。当卸载<code>pktgen</code>模块时，<code>/proc/net/pktgen</code>文件夹会被自动删除。</p>
+<p>同时，当将某个网卡绑定在某个线程时，也会在<code>/proc/net/pktgen/</code>目录下自动创建以该网卡名称为名的文件，用于记录此网卡设备的配置信息和运行信息。</p>
+<p>测试程序可以配置成一直运行，或者在发送固定数量的包之后结束。也可以使用快捷键Ctrl+C终止运行。</p>
+<h2 id="使能-pktgen"><a href="#使能-pktgen" class="headerlink" title="使能 pktgen"></a>使能 pktgen</h2><p>使用<code>pktgen</code>需要在内核配置文件开启<code>CONFIG_NET_PKTGEN</code>，</p>
+<p>内核在执行一下命令后：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ sudo modprobe pktgen<br></code></pre></td></tr></table></figure>
+
+<p>会在文件夹<code>/proc/net/</code>下创建一个<code>pktgen</code>文件夹</p>
+<h2 id="使用pktgen发包"><a href="#使用pktgen发包" class="headerlink" title="使用pktgen发包"></a>使用pktgen发包</h2><p>在加载pktgen之后会在<code>proc/net/pktgen</code>下创建出如下几个文件：</p>
+<p><img src="/image/%E5%86%85%E6%A0%B8pktgen%E4%BD%BF%E7%94%A8/image-20230915083323445.png" srcset="/img/loading.gif" lazyload alt="image-20230915083323445"></p>
+<h3 id="添加设备"><a href="#添加设备" class="headerlink" title="添加设备"></a>添加设备</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;add_device ens33&quot;</span> &gt; /proc/net/pktgen/kpktgend_0<br></code></pre></td></tr></table></figure>
+
+<p><img src="/image/%E5%86%85%E6%A0%B8pktgen%E4%BD%BF%E7%94%A8/image-20230915091151661.png" srcset="/img/loading.gif" lazyload alt="image-20230915091151661"></p>
+<h3 id="设置报文"><a href="#设置报文" class="headerlink" title="设置报文"></a>设置报文</h3><ul>
+<li>部分配置</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;pkt_size 64&quot;</span> &gt; /proc/net/pktgen/etn<br>$ <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;count 1000000&quot;</span> &gt; /proc/net/pktgen/eth3<br>$ <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;dst_mac aa:bb:cc:dd:ee:ff&quot;</span> &gt; /proc/net/pktgen/eth3<br></code></pre></td></tr></table></figure>
+
+<p><img src="/image/%E5%86%85%E6%A0%B8pktgen%E4%BD%BF%E7%94%A8/image-20230915091238685.png" srcset="/img/loading.gif" lazyload alt="image-20230915091238685"></p>
+<ul>
+<li>查看配置结果</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cat</span> /proc/net/pktgen/ens33<br></code></pre></td></tr></table></figure>
+
+<p><img src="/image/%E5%86%85%E6%A0%B8pktgen%E4%BD%BF%E7%94%A8/image-20230915091552982.png" srcset="/img/loading.gif" lazyload alt="image-20230915091552982"></p>
+<h3 id="发送报文"><a href="#发送报文" class="headerlink" title="发送报文"></a>发送报文</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;start&quot;</span> &gt; /proc/net/pktgen/pgctrl<br></code></pre></td></tr></table></figure>
+
+<h2 id="查看统计信息"><a href="#查看统计信息" class="headerlink" title="查看统计信息"></a>查看统计信息</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ <span class="hljs-built_in">cat</span> /proc/net/pktgen/ens33<br></code></pre></td></tr></table></figure>
+
+<p><img src="/image/%E5%86%85%E6%A0%B8pktgen%E4%BD%BF%E7%94%A8/image-20230915091751564.png" srcset="/img/loading.gif" lazyload alt="image-20230915091751564"></p>
+<h2 id="配置命令"><a href="#配置命令" class="headerlink" title="配置命令"></a>配置命令</h2><h3 id="控制命令"><a href="#控制命令" class="headerlink" title="控制命令"></a>控制命令</h3><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>start</td>
+<td>所有的线程开始发送</td>
+</tr>
+<tr>
+<td>stop</td>
+<td>停止</td>
+</tr>
+</tbody></table>
+<h3 id="线程命令"><a href="#线程命令" class="headerlink" title="线程命令"></a>线程命令</h3><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>add_device</td>
+<td>添加某个端口到某个线程</td>
+</tr>
+<tr>
+<td>rem_device_all</td>
+<td>删除绑定在某个线程的所有端口</td>
+</tr>
+<tr>
+<td>max_before_softirq</td>
+<td>在最多发送多少个数据包后执行do_softirq()</td>
+</tr>
+</tbody></table>
+<h3 id="端口命令"><a href="#端口命令" class="headerlink" title="端口命令"></a>端口命令</h3><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>count</td>
+<td>发送数据包的个数，0 表示一直发送</td>
+</tr>
+<tr>
+<td>clone_skb</td>
+<td>对每个skb进行多少个复制，0表示不复制。对于Dos等测试必须至零</td>
+</tr>
+<tr>
+<td>debug</td>
+<td>调试</td>
+</tr>
+<tr>
+<td>frags</td>
+<td>数据包的片段数量</td>
+</tr>
+<tr>
+<td>delay</td>
+<td>发送两个数据包之间的延时</td>
+</tr>
+<tr>
+<td>src_mac_count</td>
+<td>源mac的数量，从src mac设置的mac开始轮询</td>
+</tr>
+<tr>
+<td>dst_mac_count</td>
+<td>目的mac的数量，从dst mac设置的mac开始轮询</td>
+</tr>
+<tr>
+<td>pkt_size</td>
+<td>链路包的大小（前去CRC的值）</td>
+</tr>
+<tr>
+<td>min_pkt_size</td>
+<td>数据包最小值</td>
+</tr>
+<tr>
+<td>max_pkt_size</td>
+<td>数据包最大值</td>
+</tr>
+<tr>
+<td>udp_src_min</td>
+<td>最小源udp端口号</td>
+</tr>
+<tr>
+<td>udp_src_max</td>
+<td>最大源udp端口号</td>
+</tr>
+<tr>
+<td>udp_dst_min</td>
+<td>最小目的udp端口号</td>
+</tr>
+<tr>
+<td>udp_dst_max</td>
+<td>最大目的udp端口号</td>
+</tr>
+<tr>
+<td>flag<br />        IPSRC_RND<br />        TXSIZE_RND<br />        IPDST_RND<br />        UDPSRC_RND<br />        UDPDST_RND<br />        MACSRC_RND<br />        MACDST_RND</td>
+<td>PSRC_RND 源IP随机发送</td>
+</tr>
+<tr>
+<td>dst_min</td>
+<td>目的IP的最小值</td>
+</tr>
+<tr>
+<td>dst_max</td>
+<td>目的IP的最大值</td>
+</tr>
+<tr>
+<td>src_min</td>
+<td>源IP最小值</td>
+</tr>
+<tr>
+<td>src_max</td>
+<td>源IP最大值</td>
+</tr>
+<tr>
+<td>dst_mac</td>
+<td>目的mac</td>
+</tr>
+<tr>
+<td>src_mac</td>
+<td>源mac</td>
+</tr>
+<tr>
+<td>clear_counters</td>
+<td>清空计数器，一般程序自动清空</td>
+</tr>
+<tr>
+<td>dst6</td>
+<td>目的IPv6地址</td>
+</tr>
+<tr>
+<td>src6</td>
+<td>源IPv6地址</td>
+</tr>
+<tr>
+<td>flows</td>
+<td>并发流的个数</td>
+</tr>
+<tr>
+<td>flowlen</td>
+<td>流的长度</td>
+</tr>
+</tbody></table>
+<h2 id="pktgen脚本"><a href="#pktgen脚本" class="headerlink" title="pktgen脚本"></a>pktgen脚本</h2><h3 id="脚本实例"><a href="#脚本实例" class="headerlink" title="脚本实例"></a>脚本实例</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-meta">#!/bin/bash</span><br><span class="hljs-comment">#modprobe pktgen</span><br><br><span class="hljs-keyword">function</span> <span class="hljs-function"><span class="hljs-title">pgset</span></span>() &#123;<br>    <span class="hljs-built_in">local</span> result<br>    <span class="hljs-built_in">echo</span> <span class="hljs-variable">$1</span> &gt; <span class="hljs-variable">$PGDEV</span><br>    result=`<span class="hljs-built_in">cat</span> <span class="hljs-variable">$PGDEV</span> | fgrep <span class="hljs-string">&quot;Result: OK:&quot;</span>`<br><br>    <span class="hljs-keyword">if</span> [ <span class="hljs-string">&quot;<span class="hljs-variable">$result</span>&quot;</span> = <span class="hljs-string">&quot;&quot;</span> ]; <span class="hljs-keyword">then</span><br>    	<span class="hljs-built_in">cat</span> <span class="hljs-variable">$PGDEV</span> | fgrep Result:<br>    <span class="hljs-keyword">fi</span><br>&#125;<br><br><span class="hljs-keyword">function</span> <span class="hljs-function"><span class="hljs-title">pg</span></span>() &#123;<br>    <span class="hljs-built_in">echo</span> inject &gt; <span class="hljs-variable">$PGDEV</span><br>    <span class="hljs-built_in">cat</span> <span class="hljs-variable">$PGDEV</span><br>&#125;<br><br><span class="hljs-comment"># Config Start Here -----------------------------------------------------------</span><br><span class="hljs-comment"># thread config</span><br><span class="hljs-comment"># Each CPU has own thread. Two CPU exammple. We add ens33 respectivly.</span><br><br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> &#123;0..3&#125;; <span class="hljs-keyword">do</span><br>    PGDEV=/proc/net/pktgen/kpktgend_<span class="hljs-variable">$i</span><br>    <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Removing all devices&quot;</span><br>    pgset <span class="hljs-string">&quot;rem_device_all&quot;</span><br><span class="hljs-keyword">done</span><br><br>PGDEV=/proc/net/pktgen/kpktgend_2<br><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Adding ens33&quot;</span><br>pgset <span class="hljs-string">&quot;add_device ens33&quot;</span><br><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Setting max_before_softirq 10000&quot;</span><br>pgset <span class="hljs-string">&quot;max_before_softirq 100000&quot;</span><br><br><span class="hljs-comment"># device config</span><br><span class="hljs-comment"># 改为0可以加速</span><br>CLONE_SKB=<span class="hljs-string">&quot;clone_skb 1000000&quot;</span><br><br><span class="hljs-comment"># NIC adds 4 bytes CRC</span><br><span class="hljs-comment"># 一般值越大，可以达到的throughput越大</span><br>PKT_SIZE=<span class="hljs-string">&quot;pkt_size 1500&quot;</span><br><span class="hljs-comment"># COUNT 0 means forever</span><br><span class="hljs-comment">#COUNT=&quot;count 0&quot;</span><br>COUNT=<span class="hljs-string">&quot;count 1000000&quot;</span><br><br><span class="hljs-comment"># ipg is inter packet gap. 0 means maximum speed. 有些设备不支持</span><br>IPG=<span class="hljs-string">&quot;ipg 0&quot;</span><br>PGDEV=/proc/net/pktgen/ens33<br><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Configuring <span class="hljs-variable">$PGDEV</span>&quot;</span><br>pgset <span class="hljs-string">&quot;<span class="hljs-variable">$COUNT</span>&quot;</span><br>pgset <span class="hljs-string">&quot;<span class="hljs-variable">$CLONE_SKB</span>&quot;</span><br>pgset <span class="hljs-string">&quot;<span class="hljs-variable">$PKT_SIZE</span>&quot;</span><br><br><span class="hljs-comment">#pgset &quot;$IPG&quot;</span><br><span class="hljs-comment">#pgset &quot;dst 192.168.253.23&quot;</span><br><span class="hljs-comment"># 配置发送的源mac</span><br>pgset <span class="hljs-string">&quot;src_mac 00:05:9a:5c:7a:00&quot;</span><br><span class="hljs-comment"># 配置接收的目的mac</span><br>pgset <span class="hljs-string">&quot;dst_mac 0a:00:27:8a:00:07&quot;</span><br><br><span class="hljs-comment"># Time to run</span><br><br>PGDEV=/proc/net/pktgen/pgctrl<br><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Running... ctrl^C to stop&quot;</span><br>pgset <span class="hljs-string">&quot;start&quot;</span><br><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;Done&quot;</span><br><br><span class="hljs-comment"># Result can be vieved in /proc/net/pktgen/ens33</span><br></code></pre></td></tr></table></figure>
+
+<p>执行结果</p>
+<p><img src="/image/%E5%86%85%E6%A0%B8pktgen%E4%BD%BF%E7%94%A8/pktgen.gif" srcset="/img/loading.gif" lazyload alt="pktgen"></p>
+<h3 id="内核pktgen脚本"><a href="#内核pktgen脚本" class="headerlink" title="内核pktgen脚本"></a>内核pktgen脚本</h3><p>在仓库<a target="_blank" rel="noopener" href="https://github.com/torvalds/linux/tree/master/samples/pktgen">torvalds&#x2F;linux&#x2F;samples&#x2F;pktgen</a>中提供了多个pktgen的脚本例子，</p>
+<p><img src="/image/%E5%86%85%E6%A0%B8pktgen%E4%BD%BF%E7%94%A8/image-20230915105901218.png" srcset="/img/loading.gif" lazyload alt="image-20230915105901218"></p>
+<h3 id="脚本使用"><a href="#脚本使用" class="headerlink" title="脚本使用"></a>脚本使用</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">./pktgen_sample01_simple.sh -i ens33 -d 127.0.0.1 -t 1 -n 1000 -m 00:15:5d:4b:19:b1 -s 100000<br></code></pre></td></tr></table></figure>
+
+<p><img src="/image/%E5%86%85%E6%A0%B8pktgen%E4%BD%BF%E7%94%A8/image-20230915110658031.png" srcset="/img/loading.gif" lazyload alt="image-20230915110658031"></p>
+<h3 id="测试网络PPS性能指标，判断是否丢包"><a href="#测试网络PPS性能指标，判断是否丢包" class="headerlink" title="测试网络PPS性能指标，判断是否丢包"></a>测试网络PPS性能指标，判断是否丢包</h3><p>客户端安装pktgen来发包，接收端通过sar命令（linux系统）来查看端口统计信息，通过对比收发两端的速率来判断是否有丢包。</p>
+<p><img src="/image/%E5%86%85%E6%A0%B8pktgen%E4%BD%BF%E7%94%A8/image-20230915111012837.png" srcset="/img/loading.gif" lazyload alt="image-20230915111012837"></p>
+<h2 id="其他pktgen命令"><a href="#其他pktgen命令" class="headerlink" title="其他pktgen命令"></a>其他pktgen命令</h2><h3 id="查看版本"><a href="#查看版本" class="headerlink" title="查看版本"></a>查看版本</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ <span class="hljs-built_in">cat</span> pgctrl<br>Packet Generator <span class="hljs-keyword">for</span> packet performance testing. Version: 2.75<br></code></pre></td></tr></table></figure>
+
+<p>查看kpktgend进程</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash">ps -A | grep pkt<br>   5614 ?        00:00:03 kpktgend_0<br>   5615 ?        00:00:03 kpktgend_1<br>   5616 ?        00:00:02 kpktgend_2<br>   5618 ?        00:00:02 kpktgend_3<br>   5619 ?        00:00:02 kpktgend_0<br>   5620 ?        00:00:02 kpktgend_1<br>   5621 ?        00:00:02 kpktgend_2<br>   5622 ?        00:00:02 kpktgend_3<br></code></pre></td></tr></table></figure>
+
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="http://sunyongfeng.com/201603/networks/pktgen">pktgen | 孙勇峰的部落格 (sunyongfeng.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Hey___Man/article/details/98215294">pktgen——the packet generator within linux kernel-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.kernel.org/doc/Documentation/networking/pktgen.txt">kernel.org&#x2F;doc&#x2F;Documentation&#x2F;networking&#x2F;pktgen.txt</a></p>
+<p><a target="_blank" rel="noopener" href="https://wiki.linuxfoundation.org/networking/pktgen">networking:pktgen Wiki (linuxfoundation.org)</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mrwuzs/p/14696321.html">pktgen使用指南 - mrwuzs - 博客园 (cnblogs.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/kekukele/p/3709781.html">pktgen使用详细教程 - 可酷可乐 - 博客园 (cnblogs.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://juliofaracco.wordpress.com/2015/06/14/pktgen-a-kernel-space-traffic-generator-for-testing-network-throughput/">pktgen: A packet traffic generator in kernel space for testing network throughput. – Julio Faracco (wordpress.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/s100400507/article/details/43668557">利用pktgen发包工具做性能测试_pktgen prbs_S100400507的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/netoptimizer/network-testing/tree/master/pktgen">network-testing&#x2F;pktgen at master · netoptimizer&#x2F;network-testing (github.com)</a> pktgen测试脚本。</p>
+<p><a target="_blank" rel="noopener" href="http://jialeicui.github.io/blog/pktgen.html">pktgen的使用 (jialeicui.github.io)</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/D7h2AnlrDrEGU_eGmWGXcA">https://mp.weixin.qq.com/s/D7h2AnlrDrEGU_eGmWGXcA</a><section class="footnotes"><div class="footnote-list"><ol><li><span id="fn:1" class="footnote-text"><span><font color=red>注意</font>：一个设备只能属于一个线程。<br><a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩</a></span></span></li></ol></div></section></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Linux/" class="category-chain-item">Linux</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Linux/Linux%E5%B7%A5%E5%85%B7/" class="category-chain-item">Linux工具</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/pktgen/">#pktgen</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Linux内核pktgen使用</div>
+      <div>http://example.com/2023/09/21/Linux/Linux工具/Linux内核pktgen使用/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Oxley</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年9月21日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/09/21/Linux/Linux%E5%91%BD%E4%BB%A4/Linux%E5%91%BD%E4%BB%A4-nmcli/" title="Linux命令-nmcli">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Linux命令-nmcli</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/09/20/Linux/Linux%E8%B0%83%E4%BC%98/Linux%E7%BD%91%E7%BB%9C%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/" title="Linux网络性能调优">
+                        <span class="hidden-mobile">Linux网络性能调优</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="waline"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#waline', function() {
+      Fluid.utils.createCssLink('https://lib.baomitu.com/waline/2.14.1/waline.min.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/waline/2.14.1/waline.min.js', function() {
+        var options = Object.assign(
+          {"serverURL":"https://waline-comments-lh9l5ftj7-eddyvv.vercel.app/","path":"window.location.pathname","meta":["nick","mail","link"],"requiredMeta":["nick"],"lang":"zh-CN","emoji":["https://cdn.jsdelivr.net/gh/walinejs/emojis/weibo"],"dark":"html[data-user-color-scheme=\"dark\"]","wordLimit":0,"pageSize":10},
+          {
+            el: '#waline',
+            path: window.location.pathname
+          }
+        )
+        Waline.init(options);
+        Fluid.utils.waitElementVisible('#waline .vcontent', () => {
+          var imgSelector = '#waline .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> <div style="font-size: 0.85rem"> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

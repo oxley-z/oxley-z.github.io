@@ -1,0 +1,887 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/zipper-mouth_face_3d.png">
+  <link rel="icon" href="/img/zipper-mouth_face_3d.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Oxley">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="编译安装内核下载内核Linux内核下载The Linux Kernel Archives 安装依赖1sudo apt-get install gcc g++ libncurses5-dev build-essential kernel-package libssl-dev libc6-dev bin86 flex bison qttools5-dev libelf-dev  更改.config12">
+<meta property="og:type" content="article">
+<meta property="og:title" content="编译安装调试Linux内核">
+<meta property="og:url" content="http://example.com/2023/06/13/Linux/%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85%E8%B0%83%E8%AF%95Linux%E5%86%85%E6%A0%B8/index.html">
+<meta property="og:site_name" content="凛冬将至">
+<meta property="og:description" content="编译安装内核下载内核Linux内核下载The Linux Kernel Archives 安装依赖1sudo apt-get install gcc g++ libncurses5-dev build-essential kernel-package libssl-dev libc6-dev bin86 flex bison qttools5-dev libelf-dev  更改.config12">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/image/cover/pexels-mads-thomsen-1178448.jpg">
+<meta property="article:published_time" content="2023-06-13T03:08:56.000Z">
+<meta property="article:modified_time" content="2023-08-06T11:35:03.639Z">
+<meta property="article:author" content="Oxley">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="qemu">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/image/cover/pexels-mads-thomsen-1178448.jpg">
+  
+  
+  
+  <title>编译安装调试Linux内核 - 凛冬将至</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":90,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"appId":"UeFj0nSPOcD3JQcbVPIsrisJ-MdYXbMMI","appKey":"cNI2q6S4vqA3QtbX0FbIndWx","server_url":null,"path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Oxley&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/images/sky-clouds-sunlight-dark-e3e45ad8c5ae22995c2fd77a994dfc61.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="编译安装调试Linux内核"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-06-13 11:08" pubdate>
+          2023年6月13日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          54 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">编译安装调试Linux内核</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：2023年8月6日 晚上
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="编译安装内核"><a href="#编译安装内核" class="headerlink" title="编译安装内核"></a>编译安装内核</h1><h2 id="下载内核"><a href="#下载内核" class="headerlink" title="下载内核"></a>下载内核</h2><p>Linux内核下载<a target="_blank" rel="noopener" href="https://www.kernel.org/">The Linux Kernel Archives</a></p>
+<h2 id="安装依赖"><a href="#安装依赖" class="headerlink" title="安装依赖"></a>安装依赖</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo apt-get install gcc g++ libncurses5-dev build-essential kernel-package libssl-dev libc6-dev bin86 flex bison qttools5-dev libelf-dev<br></code></pre></td></tr></table></figure>
+
+<h2 id="更改-config"><a href="#更改-config" class="headerlink" title="更改.config"></a>更改.config</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment">#拷贝现有ubuntu的.config至编译内核的目录</span><br><span class="hljs-built_in">cp</span> -v /boot/config-$(<span class="hljs-built_in">uname</span> -r) .config<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">make menuconfig<br></code></pre></td></tr></table></figure>
+
+<ol>
+<li>打开<code>.config</code>更改<code>CONFIG_SYSTEM_TRUSTED_KEYS </code>和<code>CONFIG_SYSTEM_REVOCATION_KEYS</code></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">CONFIG_SYSTEM_TRUSTED_KEYS=<span class="hljs-string">&#x27;&#x27;</span><br>CONFIG_SYSTEM_EXTRA_CERTIFICATE_SIZE=2048<br>CONFIG_SYSTEM_REVOCATION_KEYS=<span class="hljs-string">&quot;&quot;</span><br></code></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>更改<code>CONFIG_DEBUG_INFO_BTF</code></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">CONFIG_DEBUG_INFO_BTF=n<br></code></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>注释掉CONFIG_X86_X32</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment">#CONFIG_X86_X32=y</span><br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="编译内核"><a href="#编译内核" class="headerlink" title="编译内核"></a>编译内核</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment">#基于文本选单的配置界面，字符终端下推荐使用</span><br>make menuconfig<br><br>make -j$(<span class="hljs-built_in">nproc</span>)<br><br>make all<br><br><span class="hljs-comment"># 编译模块</span><br>make -j$(<span class="hljs-built_in">nproc</span>) modules<br></code></pre></td></tr></table></figure>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><h3 id="首先安装模块"><a href="#首先安装模块" class="headerlink" title="首先安装模块"></a>首先安装模块</h3><p>这里加上<code>INSTALL_MOD_STRIP=1</code>是为了避免内核启动时卡在 <a href="#ramdisk">loading initial ramdisk</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo make INSTALL_MOD_STRIP=1 modules_install<br></code></pre></td></tr></table></figure>
+
+<h3 id="安装内核"><a href="#安装内核" class="headerlink" title="安装内核"></a>安装内核</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">make bzImage<br>sudo make install<br></code></pre></td></tr></table></figure>
+
+<h3 id="更改引导"><a href="#更改引导" class="headerlink" title="更改引导"></a>更改引导</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo update-initramfs -c -k 5.10.0<br></code></pre></td></tr></table></figure>
+
+<h3 id="更改grub"><a href="#更改grub" class="headerlink" title="更改grub"></a>更改<code>grub</code></h3><p>修改文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo vi /etc/default/grub<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment">#GRUB_TIMEOUT_STYLE=hidden</span><br>GRUB_TIMEOUT=10<br></code></pre></td></tr></table></figure>
+
+<p>更新</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo update-grub<br></code></pre></td></tr></table></figure>
+
+<h3 id="重启"><a href="#重启" class="headerlink" title="重启"></a>重启</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">reboot<br></code></pre></td></tr></table></figure>
+
+<p>在<code>GRUB</code>页面选择<code>Advanced options for Ubuntu</code></p>
+<p><img src="/image/Linux%E5%86%85%E6%A0%B8/image-20230515104210488.png" srcset="/img/loading.gif" lazyload alt="image-20230515104210488"></p>
+<p>选择需要启动的内核版本</p>
+<p><img src="/image/Linux%E5%86%85%E6%A0%B8/image-20230517111217516.png" srcset="/img/loading.gif" lazyload alt="image-20230517111217516"></p>
+<p><img src="/image/Linux%E5%86%85%E6%A0%B8/image-20230515101713706.png" srcset="/img/loading.gif" lazyload alt="image-20230517111217516"></p>
+<center>安装新内核之前的内核版本</center>
+
+<p><img src="/image/Linux%E5%86%85%E6%A0%B8/image-20230517110513053.png" srcset="/img/loading.gif" lazyload alt="image-20230517110513053"></p>
+<center>安装新内核之后</center>
+
+<p><a href="#GRUB">若重启未看到选择内核的页面参考</a></p>
+<h2 id="其他操作"><a href="#其他操作" class="headerlink" title="其他操作"></a>其他操作</h2><h3 id="清理内核源目录"><a href="#清理内核源目录" class="headerlink" title="清理内核源目录"></a>清理内核源目录</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># make mrproper会删除配置的.config以及其他备份</span><br>sudo make mrproper<br><span class="hljs-comment"># make clean会删除编译过程中生成的中间文件和内核镜像文件</span><br>sudo make clean<br></code></pre></td></tr></table></figure>
+
+<h3 id="卸载安装的内核"><a href="#卸载安装的内核" class="headerlink" title="卸载安装的内核"></a>卸载安装的内核</h3><p>获取所有安装的内核版本</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">dpkg --get-selections | grep linux<br></code></pre></td></tr></table></figure>
+
+<p>选择要卸载的版本，卸载下列安装包</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo apt remove linux-image-&lt;版本&gt;-generic<br>sudo apt remove linux-headers-&lt;版本&gt;<br>sudo apt remove linux-headers-&lt;版本&gt;-generic<br>sudo apt remove linux-modules-&lt;版本&gt;-generic<br></code></pre></td></tr></table></figure>
+
+
+
+<p>卸载源码版本</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo <span class="hljs-built_in">rm</span> /boot/vmlinuz-5.10.0<br>sudo <span class="hljs-built_in">rm</span> /boot/initrd.img-5.10.0<br>sudo <span class="hljs-built_in">rm</span> /boot/System.map-5.10.0<br>sudo <span class="hljs-built_in">rm</span> /boot/config-5.10.0<br>sudo <span class="hljs-built_in">rm</span> -rf /lib/modules/5.10.0<br></code></pre></td></tr></table></figure>
+
+<p>更新启动引导</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo update-grub<br></code></pre></td></tr></table></figure>
+
+<h3 id="修改内核配置菜单实现对新加入内核源码的控制"><a href="#修改内核配置菜单实现对新加入内核源码的控制" class="headerlink" title="修改内核配置菜单实现对新加入内核源码的控制"></a>修改内核配置菜单实现对新加入内核源码的控制</h3><ol>
+<li><p>将源码拷贝到内核对应的文件夹下</p>
+</li>
+<li><p>为配置界面添加控制新加入源代码的内容</p>
+<p> 在加入源码的目录下创建<code>Kconfig</code>文件，便添加相应控制内容</p>
+</li>
+<li><p>修改上层<code>Kconfig</code>文件，包含新加入源码的<code>Kconfig</code>文件。</p>
+</li>
+<li><p>修改<code>Makefile</code>文件</p>
+</li>
+<li><p>修改上一级目录的Makefile</p>
+</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">make[1]: *** No rule to make target <span class="hljs-string">&#x27;debian/canonical-certs.pem&#x27;</span>, needed by <span class="hljs-string">&#x27;certs/x509_certificate_list&#x27;</span>.  Stop.<br>make: *** [Makefile:1868: certs] Error 2<br></code></pre></td></tr></table></figure>
+
+<p>解决方法<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=7G3UkugVhOw">(104) how to fix the error “No rule to make target ‘debian canonical certs pem’, needed by ‘certs x509 cer - YouTube</a>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">nano .config<br>查找到debian/canonical-certs.pem和debian/canonical-revoked-certs.pem字符串删除<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">BTF: .tmp_vmlinux.btf: pahole (pahole) is not available<br></code></pre></td></tr></table></figure>
+
+<p>解决方法</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo apt install dwarves<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><h3 id="1-Module-symvers-is-missing"><a href="#1-Module-symvers-is-missing" class="headerlink" title="1. Module.symvers is missing"></a>1. Module.symvers is missing</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">WARNING: Symbol version dump <span class="hljs-string">&quot;Module.symvers&quot;</span> is missing.<br>         Modules may not have dependencies or modversions.<br>         You may get many unresolved symbol warnings.<br></code></pre></td></tr></table></figure>
+
+<p>执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">make modules_prepare<br></code></pre></td></tr></table></figure>
+
+<h3 id="2-No-rule-to-make-target-‘debian-x2F-canonical-certs-pem‘-needed-by-‘certs-x2F-x509-certificate-list‘"><a href="#2-No-rule-to-make-target-‘debian-x2F-canonical-certs-pem‘-needed-by-‘certs-x2F-x509-certificate-list‘" class="headerlink" title="2. No rule to make target ‘debian&#x2F;canonical-certs.pem‘, needed by ‘certs&#x2F;x509_certificate_list‘"></a>2. No rule to make target ‘debian&#x2F;canonical-certs.pem‘, needed by ‘certs&#x2F;x509_certificate_list‘</h3><p>可以修改config：</p>
+<p>vim .config</p>
+<p>修改<code>CONFIG_SYSTEM_TRUSTED_KEYS</code>，将其置空： CONFIG_SYSTEM_TRUSTED_KEYS&#x3D;””<em>也可能需要设置</em>CONFIG_SYSTEM_REVOCATION_KEYS为空。</p>
+<h3 id="3-FAILED-load-BTF-from-vmlinux-No-such-file-or-directory"><a href="#3-FAILED-load-BTF-from-vmlinux-No-such-file-or-directory" class="headerlink" title="3. FAILED:load BTF from vmlinux:No such file or directory"></a>3. FAILED:load BTF from vmlinux:No such file or directory</h3><p>vim .config</p>
+<p>修改<code>CONFIG_DEBUG_INFO_BTF</code>，将其置n</p>
+<h3 id="4-安装完内核之后无法显示GRUB用以选择内核启动"><a href="#4-安装完内核之后无法显示GRUB用以选择内核启动" class="headerlink" title="4. 安装完内核之后无法显示GRUB用以选择内核启动"></a>4. 安装完内核之后无法显示<code>GRUB</code>用以选择内核启动<a name="GRUB"/></h3><p>进入命令行之后执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo vi /etc/default/grub<br></code></pre></td></tr></table></figure>
+
+<p>注释掉</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># GRUB_TIMEOUT_STYLE=hidden</span><br></code></pre></td></tr></table></figure>
+
+<p>修改</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">GRUB_TIMEOUT=10<br><br>GRUB_COMLINE_LINUX_DEFAULT=<span class="hljs-string">&quot;text&quot;</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/image/Linux%E5%86%85%E6%A0%B8/image-20230515103459264.png" srcset="/img/loading.gif" lazyload alt="image-20230515103459264"></p>
+<p>执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo update-grub<br></code></pre></td></tr></table></figure>
+
+<p><img src="/image/Linux%E5%86%85%E6%A0%B8/image-20230515103559801.png" srcset="/img/loading.gif" lazyload alt="image-20230515103559801"></p>
+<h3 id="5-内核启动卡在loading-initial-ramdisk"><a href="#5-内核启动卡在loading-initial-ramdisk" class="headerlink" title="5. 内核启动卡在loading initial ramdisk"></a>5. 内核启动卡在<code>loading initial ramdisk</code><a name="ramdisk"/></h3><p>编译内核过程中，当安装内核模块时未使用</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">INSTALL_MOD_STRIP=1<br></code></pre></td></tr></table></figure>
+
+<p>标注，会导致<code>initrd</code>文件过大，Ubuntu 20.04所用的Grub 2.04无法支持过大的initrd文件（如500M），导致内核启动时卡在<code>“loading initial ramdisk”（Can’t allocate initrd）</code>。</p>
+<p>可行的办法：</p>
+<p>安装模块时加上<code>INSTALL_MOD_STRIP=1</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo make INSTALL_MOD_STRIP=1 modules_install<br></code></pre></td></tr></table></figure>
+
+<h3 id="6-sign-file-No-such-file-or-directory"><a href="#6-sign-file-No-such-file-or-directory" class="headerlink" title="6. sign-file: : No such file or directory"></a>6. sign-file: : No such file or directory</h3><p>报错信息：</p>
+<p><img src="/image/Linux%E5%86%85%E6%A0%B8/image-20230516082845572.png" srcset="/img/loading.gif" lazyload alt="image-20230516082845572"></p>
+<p>解决方法：</p>
+<p> 将<code>.config</code>的 <code>CONFIG_MODULE_SIG_KEY=&quot;cert/signing_key.pem&quot;</code>恢复后解决。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">CONFIG_MODULE_SIG_KEY=<span class="hljs-string">&quot;cert/signing_key.pem&quot;</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="7-zstd-not-found"><a href="#7-zstd-not-found" class="headerlink" title="7. zstd: not found"></a>7. zstd: not found</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">ZSTD22  <span class="hljs-built_in">arch</span>/x86/boot/compressed/vmlinux.bin.zst<br>/bin/sh: 1: zstd: not found<br>make[2]: *** [<span class="hljs-built_in">arch</span>/x86/boot/compressed/Makefile:134：<span class="hljs-built_in">arch</span>/x86/boot/compressed/vmlinux.bin.zst] 错误 127<br>make[2]: *** 正在删除文件“<span class="hljs-built_in">arch</span>/x86/boot/compressed/vmlinux.bin.zst” make[1]: *** [<span class="hljs-built_in">arch</span>/x86/boot/Makefile:115：<span class="hljs-built_in">arch</span>/x86/boot/compressed/vmlinux] 错误 2<br></code></pre></td></tr></table></figure>
+
+<p>解决方法</p>
+<p>在配置内核时更改<code>Kernel compression mode</code>为<code>LZMA</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">General setup  ---&gt;<br>	Kernel compression mode (LZMA)  ---&gt;<br></code></pre></td></tr></table></figure>
+
+<p>保存后重新编译安装即可。</p>
+<h2 id="单独编译Linux内核的某一个模块"><a href="#单独编译Linux内核的某一个模块" class="headerlink" title="单独编译Linux内核的某一个模块"></a>单独编译Linux内核的某一个模块</h2><p>找到对应的模块文件夹，找到需要编译的文件，确认编译的config文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">make CONFIG_INFINIBAND=m -C &lt;源码&gt; M=&lt;模块文件夹&gt; modules<br></code></pre></td></tr></table></figure>
+
+<h1 id="qemu-gdb调试linux内核"><a href="#qemu-gdb调试linux内核" class="headerlink" title="qemu+gdb调试linux内核"></a>qemu+gdb调试linux内核</h1><h2 id="安装qemu"><a href="#安装qemu" class="headerlink" title="安装qemu"></a>安装qemu</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo apt install qemu<br></code></pre></td></tr></table></figure>
+
+<h2 id="配置调试版内核"><a href="#配置调试版内核" class="headerlink" title="配置调试版内核"></a>配置调试版内核</h2><p>对内核进行调试需要解析符号信息，所以得编译一个调试版内核。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cd</span> linux-5.15<br>make menuconfig<br></code></pre></td></tr></table></figure>
+
+<p>这里需要开启内核参数<code>CONFIG_DEBUG_INFO</code>和<code>CONFIG_GDB_SCRIPTS</code>。GDB提供了Python接口来扩展功能，内核基于Python接口实现了一系列辅助脚本，简化内核调试，开启<code>CONFIG_GDB_SCRIPTS</code>参数就可以使用了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">Kernel hacking  ---&gt;<br>    [*] Kernel debugging<br>    Compile-time checks and compiler options  ---&gt;<br>        [*] Compile the kernel with debug info<br>        [*]   Provide GDB scripts <span class="hljs-keyword">for</span> kernel debugging<br></code></pre></td></tr></table></figure>
+
+<h2 id="构建initramfs根文件系统"><a href="#构建initramfs根文件系统" class="headerlink" title="构建initramfs根文件系统"></a>构建initramfs根文件系统</h2><p>Linux系统启动阶段，boot loader加载完内核文件vmlinuz后，内核紧接着需要挂载磁盘根文件系统，但如果此时内核没有相应驱动，无法识别磁盘，就需要先加载驱动，而驱动又位于<code>/lib/modules</code>，得挂载根文件系统才能读取，这就陷入了一个两难境地，系统无法顺利启动。于是有了initramfs根文件系统，其中包含必要的设备驱动和工具，boot loader加载initramfs到内存中，内核会将其挂载到根目录<code>/</code>,然后运行<code>/init</code>脚本，挂载真正的磁盘根文件系统。</p>
+<p>这里借助<a target="_blank" rel="noopener" href="https://www.busybox.net/">BusyBox</a>构建极简initramfs，提供基本的用户态可执行程序。</p>
+<p>编译BusyBox，配置<code>CONFIG_STATIC</code>参数，编译静态版BusyBox，编译好的可执行文件<code>busybox</code>不依赖动态链接库，可以独立运行，方便构建initramfs。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cd</span> busybox-1.28.0<br>make menuconfig<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">Settings  ---&gt;<br>    [*] Build static binary (no shared libs)<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">make -j 20<br>make install<br></code></pre></td></tr></table></figure>
+
+<p>会安装在<code>_install</code>目录:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">ls</span> _install<br>bin  linuxrc  sbin  usr<br></code></pre></td></tr></table></figure>
+
+<p>创建initramfs，其中包含BusyBox可执行程序、必要的设备文件、启动脚本<code>init</code>。这里没有内核模块，如果需要调试内核模块，可将需要的内核模块包含进来。<code>init</code>脚本只挂载了虚拟文件系统<code>procfs</code>和<code>sysfs</code>，没有挂载磁盘根文件系统，所有调试操作都在内存中进行，不会落磁盘。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">mkdir</span> initramfs<br><span class="hljs-built_in">cd</span> initramfs<br><span class="hljs-built_in">cp</span> ../_install/* -rf ./<br><span class="hljs-built_in">mkdir</span> dev proc sys<br>sudo <span class="hljs-built_in">cp</span> -a /dev/&#123;null, console, <span class="hljs-built_in">tty</span>, tty1, tty2, tty3, tty4&#125; ./dev/<br><span class="hljs-built_in">rm</span> linuxrc<br>vim init<br><span class="hljs-built_in">chmod</span> a+x init<br><span class="hljs-built_in">ls</span><br>bin   dev  init  proc  sbin  sys   usr<br></code></pre></td></tr></table></figure>
+
+<p>init文件的内容</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-meta">#!/bin/sh</span><br>mount -t proc none /proc<br>mount -t sysfs none /sys<br><span class="hljs-built_in">echo</span> -e <span class="hljs-string">&quot;\nBoot took <span class="hljs-subst">$(cut -d&#x27; &#x27; -f1 /proc/uptime)</span> seconds\n&quot;</span><br><span class="hljs-built_in">exec</span> /bin/sh<br></code></pre></td></tr></table></figure>
+
+<p>打包initramfs</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">find . -print0 | cpio --null -ov --format=newc | gzip -9 &gt; ../initramfs.cpio.gz<br></code></pre></td></tr></table></figure>
+
+<h2 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cd</span> busybox-xxx<br>qemu-system-x86_64 -s -kernel /path/to/vmlinux -initrd initramfs.cpio.gz -nographic -append <span class="hljs-string">&quot;console=ttyS0&quot;</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li><code>-s</code> 是<code>-gdb tcp::1234</code>的缩写，监听1234端口，在GDB中通过<code>target remote localhost:1234</code>连接；</li>
+<li><code>-kernel</code> 指定编译好的调试内核<code>vmlinux</code>路径；</li>
+<li><code>initrd</code> 指定制作好的<code>initramfs</code>；</li>
+<li><code>-nographic</code>取消图形输出窗口，试qemu成简单的命令行程序。</li>
+<li><code>-append &quot;console=ttyS0&quot;</code>将输出重定向到console，将会显示在标准输出stdio。</li>
+</ul>
+<p>启动后的根目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">/ <span class="hljs-built_in">ls</span><br>bin   dev  init  proc  root  sbin  sys   usr<br></code></pre></td></tr></table></figure>
+
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://consen.github.io/2018/01/17/debug-linux-kernel-with-qemu-and-gdb/">使用QEMU和GDB调试Linux内核 | Consen</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/dream397/p/13984263.html">Linux下使用内核源码单独编译某一模块 - tycoon3 - 博客园 (cnblogs.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/phmatthaus/article/details/124353775">内核错误: No rule to make target ‘debian&#x2F;canonical-certs.pem‘, needed by ‘certs&#x2F;x509_certificate_list‘_no rule to make target ‘debian&#x2F;canonical-certs.pem_蓝天居士的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/yaoxinJJJ/article/details/115433638">Linux 内核 下载 编译 安装 2021 ubuntu_yaoxinJJJ的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.zhaixue.cc/kernel/kernel-module_sysmvers.html">内核Module.symvers文件揭秘 - Linux内核编程 | 宅学部落 (zhaixue.cc)</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/harrypotterjackson/p/11846222.html">如何编译安装Linux内核 - LightningStar - 博客园 (cnblogs.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/gmpy/p/12533548.html">ubuntu上更新和卸载Linux内核 - 广漠飘羽 - 博客园 (cnblogs.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/chiwent/blog/issues/1">关于Ubuntu内核(更新和卸载内核、取消自动更新) · Issue #1 · chiwent&#x2F;blog (github.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/HandsomeHong/article/details/125157372">自行编译内核，启动内核卡在“loading initial ramdisk”_启动卡在initrd_奇妙之二进制的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/bdwdwks/article/details/106294349">linux——编译内核（ubuntu18.04+linux-5.6.4）</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_52592969/article/details/127815302">编译内核 make modules_install报错SSL error:02001002:system library:fopen:No such file or directory_ssl: error:02001002_酱山楂的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.kernel.org/doc/html/latest/translations/zh_CN/index.html">中文翻译 — The Linux Kernel documentation</a> Linux内核中文文档。</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/sustwct/article/details/7109251">[arch&#x2F;x86&#x2F;boot&#x2F;compressed&#x2F;vmlinux.bin.lzma] Error 1_sustwct的博客-CSDN博客</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Linux/" class="category-chain-item">Linux</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Linux/">#Linux</a>
+      
+        <a href="/tags/qemu/">#qemu</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>编译安装调试Linux内核</div>
+      <div>http://example.com/2023/06/13/Linux/编译安装调试Linux内核/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Oxley</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年6月13日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/06/19/Windows/Windows%20Terminal%E6%B7%BB%E5%8A%A0%E8%87%B3%E9%BC%A0%E6%A0%87%E5%8F%B3%E9%94%AE/" title="Windows Terminal添加至鼠标右键">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Windows Terminal添加至鼠标右键</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/06/12/Linux/PetaLinux/PetaLinux%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/" title="PetaLinux常用操作">
+                        <span class="hidden-mobile">PetaLinux常用操作</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="waline"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#waline', function() {
+      Fluid.utils.createCssLink('https://lib.baomitu.com/waline/2.14.1/waline.min.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/waline/2.14.1/waline.min.js', function() {
+        var options = Object.assign(
+          {"serverURL":"https://waline-comments-lh9l5ftj7-eddyvv.vercel.app/","path":"window.location.pathname","meta":["nick","mail","link"],"requiredMeta":["nick"],"lang":"zh-CN","emoji":["https://cdn.jsdelivr.net/gh/walinejs/emojis/weibo"],"dark":"html[data-user-color-scheme=\"dark\"]","wordLimit":0,"pageSize":10},
+          {
+            el: '#waline',
+            path: window.location.pathname
+          }
+        )
+        Waline.init(options);
+        Fluid.utils.waitElementVisible('#waline .vcontent', () => {
+          var imgSelector = '#waline .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> <div style="font-size: 0.85rem"> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

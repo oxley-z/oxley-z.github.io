@@ -1,0 +1,864 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/zipper-mouth_face_3d.png">
+  <link rel="icon" href="/img/zipper-mouth_face_3d.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Oxley">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="IBA功能(Features)队列对（Queue Pairs）QP是硬件提供给IBA消费者的虚拟接口；它为消费者提供虚拟通信端口。该体系结构支持每个通道适配器（channel adapter）最多224个QP；每个QP的操作与其他QP无关。每个QP提供高度的隔离和保护，以防止其他QP操作和其他消费者。因此，可以将QP视为分配给单个消费者的私有资源。如图17所示，消费者可能会使用多个QP。  消费者">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IBA功能">
+<meta property="og:url" content="http://example.com/2023/07/15/RDMA/IBA%E5%8A%9F%E8%83%BD/index.html">
+<meta property="og:site_name" content="凛冬将至">
+<meta property="og:description" content="IBA功能(Features)队列对（Queue Pairs）QP是硬件提供给IBA消费者的虚拟接口；它为消费者提供虚拟通信端口。该体系结构支持每个通道适配器（channel adapter）最多224个QP；每个QP的操作与其他QP无关。每个QP提供高度的隔离和保护，以防止其他QP操作和其他消费者。因此，可以将QP视为分配给单个消费者的私有资源。如图17所示，消费者可能会使用多个QP。  消费者">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/image/cover/pexels-torsten-dettlaff-971522.jpg">
+<meta property="article:published_time" content="2023-07-15T02:10:15.000Z">
+<meta property="article:modified_time" content="2023-07-17T05:55:33.029Z">
+<meta property="article:author" content="Oxley">
+<meta property="article:tag" content="IBA">
+<meta property="article:tag" content="RDMA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/image/cover/pexels-torsten-dettlaff-971522.jpg">
+  
+  
+  
+  <title>IBA功能 - 凛冬将至</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":90,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"appId":"UeFj0nSPOcD3JQcbVPIsrisJ-MdYXbMMI","appKey":"cNI2q6S4vqA3QtbX0FbIndWx","server_url":null,"path":"window.location.pathname","ignore_local":true}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Oxley&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/images/sky-clouds-sunlight-dark-e3e45ad8c5ae22995c2fd77a994dfc61.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="IBA功能"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-07-15 10:10" pubdate>
+          2023年7月15日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          10k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          84 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">IBA功能</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：2023年7月17日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="IBA功能-Features"><a href="#IBA功能-Features" class="headerlink" title="IBA功能(Features)"></a>IBA功能(Features)</h1><h2 id="队列对（Queue-Pairs）"><a href="#队列对（Queue-Pairs）" class="headerlink" title="队列对（Queue Pairs）"></a>队列对（Queue Pairs）</h2><p>QP是硬件提供给IBA消费者的虚拟接口；它为消费者提供虚拟通信端口。该体系结构支持每个通道适配器（channel adapter）最多2<sup>24</sup>个QP；每个QP的操作与其他QP无关。每个QP提供高度的隔离和保护，以防止其他QP操作和其他消费者。因此，可以将QP视为分配给单个消费者的私有资源。如图17所示，消费者可能会使用多个QP。</p>
+<p><img src="/image/IBA%E5%8A%9F%E8%83%BD/image-20230714151031129.png#pic_center" srcset="/img/loading.gif" lazyload alt="image-20230714151031129"></p>
+<p>消费者通过分配QP并指定其服务类别来创建此虚拟通信端口。通信在源QP和目标QP之间进行。对于连接定向服务，每个QP都与一个其他QP紧密绑定，通常位于不同的节点上。消费者启动任何必要的通信建立以将QP与目标QP绑定，并使用某些信息（例如目标LID，服务级别和协商的操作限制）配置QP上下文。</p>
+<p>消费者向QP发布工作请求以通过该QP调用通信。</p>
+<h2 id="服务类型（Types-of-Service）"><a href="#服务类型（Types-of-Service）" class="headerlink" title="服务类型（Types of Service）"></a>服务类型（Types of Service）</h2><p>根据源QP和接收QP的交互方式，为每个QP配置一定的操作类别（称为服务类型）。源QP和目标QP都必须配置为相同的服务类型。每种服务类型都基于以下属性。</p>
+<p>已收到消息. 根据源QP和接收QP的交互方式，为每个QP配置一定的操作类别（称为服务类型）。源QP和目标QP都必须配置为相同的服务类型。每种服务类型都基于以下属性。</p>
+<ul>
+<li><strong>面向连接与数据报</strong> - 对于面向连接的服务，QP与一个其他QP关联，并且所有发布到QP的工作请求都会导致发送到已建立的目标QP的消息。数据报操作允许使用单个QP向任何节点上的任何适当QP发送和接收消息。</li>
+<li><strong>可靠与不可靠</strong> - IBA传输通过一系列确认来保证可靠性。对于可靠服务，传输保证在没有错误的情况下按顺序且仅一次地传递每个消息。为了提供这种可靠性，接收QP使用肯定确认（ACK）或否定确认（NAK）确认所有接收到的入站请求。对于不可靠的服务，传输协议不能保证传递所有数据，尽管有机制可以确保所有接收到的数据最多传递一次，并且传递的数据未损坏。此外，某些情况下，布线配置的更改可能导致数据无序传递；可靠服务可以检测并从这些情况中恢复。不可靠的服务可以检测到这些情况，但无法独立从中恢复。</li>
+<li><strong>IBA传输与其他传输</strong> - IBA传输服务为基于通道和基于内存的操作定义了特定的传输协议。IBA还支持使用通道适配器作为数据链路引擎在节点之间发送原始数据包，这对于支持遗留协议堆栈和遗留网络非常有用。</li>
+</ul>
+<center>IBA定义的服务类型</center>
+
+
+<table>
+<thead>
+<tr>
+<th align="left">服务类型</th>
+<th align="center">面向连接</th>
+<th align="center">Acknowledged</th>
+<th align="center">Transport</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">可靠连接（Reliable Connection）</td>
+<td align="center">√</td>
+<td align="center">√</td>
+<td align="center">IBA</td>
+</tr>
+<tr>
+<td align="left">不可靠连接（Unreliable Connection ）</td>
+<td align="center">√</td>
+<td align="center">×</td>
+<td align="center">IBA</td>
+</tr>
+<tr>
+<td align="left">可靠数据报（Reliable Datagram ）</td>
+<td align="center">×</td>
+<td align="center">√</td>
+<td align="center">IBA</td>
+</tr>
+<tr>
+<td align="left">不可靠数据报（Unreliable Datagram）</td>
+<td align="center">×</td>
+<td align="center">×</td>
+<td align="center">IBA</td>
+</tr>
+<tr>
+<td align="left">原始数据报（RAW Datagram ）</td>
+<td align="center">×</td>
+<td align="center">×</td>
+<td align="center">IBA</td>
+</tr>
+</tbody></table>
+<p>某些IBA操作仅适用于某些服务类别。如果操作不适用于配置的服务类别，则QP会拒绝WQE。</p>
+<p>面向连接的服务要求消费者启动与目标节点的通信建立过程（连接设置）以关联QP并在任何QP操作之前建立QP上下文。实际上，除了原始数据报之外的所有服务类别都需要某种形式的通信设置来关联队列对。对于可靠数据报服务，节点执行通信建立过程以将端到端（EE）上下文（稍后将进行解释）与每个目标节点关联。为可靠数据报服务配置的所有QP都使用已建立的EE上下文，并且工作请求指定要用于该操作的EE上下文。</p>
+<p>原始数据报与不可靠数据报类似，只是源QP不知道将接收和处理消息的QP的身份。原始数据报允许路由器将原始数据报分组转发到没有等效QP的不同结构（如LAN或WAN）上的非IBA目的地。有两种类型的原始数据报，IPv6和Ethertype。IPv6原始数据报包含全局路由报头，并且分组有效载荷包含在全局路由报头中标识的传输协议服务数据单元。以太网类型原始数据报包含以太网类型字段，数据包有效载荷包含以太网类型字段中标识的传输协议服务数据单元。</p>
+<p>IBA定义了通道（发送&#x2F;接收）和内存（RDMA）语义。原始数据报和不可靠数据报服务不支持内存语义。</p>
+<h2 id="密钥（Keys）"><a href="#密钥（Keys）" class="headerlink" title="密钥（Keys）"></a><span id="keys">密钥（Keys）</span></h2><p>IBA使用各种密钥提供隔离和保护。密钥是由管理实体分配的值，以各种方式在消息中使用。密钥本身不提供安全性，因为密钥在跨越结构的消息中是可用的，因此任何能够到达结构内部的实体都可以确定密钥值。 IBA确实对应用程序如何访问某些密钥施加了限制。</p>
+<ul>
+<li><p><strong>管理密钥</strong>（M_Key）：强制执行主子网管理器的控制。由子网管理器管理，并用于某些子网管理数据包。每个通道适配器端口都有一个由SM设置并启用的M_Key。SM可以为每个端口分配不同的密钥。启用后，端口拒绝某些不包含编程M_Key的管理数据包。因此，只有具有编程M_Key的SM才能更改节点的布线配置。只要SM处于活动状态，SM可以防止读取端口的M_Key。端口维护超时时间，因此如果SM失败，则端口将恢复到未受管理状态。交换机只有一个M_Key。</p>
+</li>
+<li><p><strong>基板管理密钥</strong>（B_Key）：强制控制子网基板管理器。由子网基板管理器管理并在某些MAD中使用。每个通道适配器端口都有一个由基板管理器设置的B_Key。基板管理器可以为每个端口分配不同的密钥。启用后，端口拒绝不包含编程B_Key的某些管理数据包。因此，只有具有编程B_Key的基板管理器才能更改节点的基板配置。只要基板管理器处于活动状态，基板管理器就可以防止读取端口的B_Key。端口维护超时时间，因此如果基板管理器失败，则端口将恢复到未受管状态。交换机有一个B_Key。</p>
+</li>
+<li><p><strong>分区密钥</strong>（P_Key）：强制成员身份。分区管理器（PM）通过子网管理器进行管理。每个通道适配器端口都包含一个由PM设置的分区密钥表。需要为相同的分区配置QP才能进行通信（除了QP0，QP1和配置为原始数据报的端口），因此P_Key在每个IB传输数据包中都会携带。通信建立过程的一部分确定特定QP或EEC使用的P_Key。EEC包含可靠数据报服务的P_Key，而QP上下文包含其他IBA传输类型的P_Key。在发送的每个数据包中，将QP或EEC中的P_Key放置，并将其与接收到的每个数据包中的P_Key进行比较。比较P_Key失败的接收数据包将被拒绝。每个交换机都有一个用于管理消息的P_Key表，并且可以选择支持基于其P_Key过滤数据包的分区强制表。</p>
+</li>
+<li><p><strong>队列密钥</strong>（Q_Key）：强制可靠和不可靠数据报服务的访问权限（不包括RAW数据报服务类型）。由通道适配器管理。在数据报服务的通信建立期间，节点为特定队列对交换Q_Key，节点在发送到远程QP的所有数据包中使用传递给其远程QP的值。同样，远程节点使用提供的Q_Key。接收到具有不同于节点提供给远程队列对的Q_Key的数据包意味着该数据包无效，因此被拒绝。</p>
+<p>具有最高有效位集的Q_Key被认为是受控Q_Keys（例如GSI Q_Key），并且HCA不允许消费者任意指定受控Q_Key。尝试发送受控Q_Key会导致使用QP上下文中的Q_Key。因此，操作系统保持控制权，因为它可以为特权消费者配置受控Q_Key的QP上下文。</p>
+</li>
+<li><p><strong>内存密钥</strong>（L_Key和R_Key）：启用虚拟地址并为消费者提供控制访问其内存的机制。这些密钥由通道适配器通过注册过程进行管理。消费者向通道适配器注册一个内存区域，并接收L_Key和R_Key。消费者在工作请求中使用L_Key来描述本地内存，并将R_Key传递给远程消费者以用于RDMA操作。当消费者排队RDMA操作时，它指定了从远程消费者传递给它的R_Key，并且R_Key包含在RDMA请求数据包中，发送到原始通道适配器。 R_Key验证发送方访问目标内存的权利，并为目标通道适配器提供将虚拟地址转换为物理地址的手段。</p>
+</li>
+</ul>
+<h2 id="虚拟内存地址（Virtual-Memory-Address）"><a href="#虚拟内存地址（Virtual-Memory-Address）" class="headerlink" title="虚拟内存地址（Virtual Memory Address）"></a>虚拟内存地址（Virtual Memory Address）</h2><p>IBA针对虚拟寻址进行了优化。也就是说，IBA消费者在工作请求中使用虚拟地址，通道适配器能够根据需要将虚拟地址转换为物理地址。为了实现这一点，每个消费者都向通道适配器注册虚拟内存区域，并且通道适配器返回2个内存句柄，称为L_Key和R_Key。然后，消费者在需要访问该区域的每个工作请求中使用L_Key。有关L_Key使用的说明，请参见<a href="#keys">密钥</a>。<br>内存注册提供了机制，允许IBA消费者描述一组虚拟连续的内存位置或一组物理连续的内存位置，以便HCA使用虚拟地址将内存作为虚拟连续缓冲区访问。</p>
+<p>IBA还支持远程内存访问（RDMA），允许远程消费者访问已注册的内存。对于RDMA，消费者将R_KEY和该内存区域中缓冲区的虚拟地址传递给另一个消费者。该远程消费者在其RDMA WQE中提供该R_Key，以访问原始节点中的内存。有关R_Key使用的详细说明，请参见<a href="#keys">密钥</a>。</p>
+<h2 id="保护域（Protection-Domains）"><a href="#保护域（Protection-Domains）" class="headerlink" title="保护域（Protection Domains）"></a>保护域（Protection Domains）</h2><p>内存注册不仅允许使用虚拟内存寻址，而且还提供了更高级别的保护，以防止意外和未经授权的访问。</p>
+<p>由于消费者可能与许多不同的目标通信，但不希望让所有这些目标都对其注册的内存具有相同的访问权限，因此IBA提供了保护域。保护域允许使用者控制哪一组内存区域和哪一组QP可以访问内存窗口。</p>
+<p>在消费者分配QP或注册内存之前，它会创建一个或多个保护域。 QP分配给保护域，并向保护域注册内存。特定内存域的L_Key和R_Key仅在为同一保护域创建的QP上有效。</p>
+<h2 id="分区（Partitions）"><a href="#分区（Partitions）" class="headerlink" title="分区（Partitions）"></a>分区（Partitions）</h2><p>分区强制在共享InfiniBand结构的系统之间实现隔离。分区与子网，交换机或路由器建立的边界无关。相反，分区描述了结构中可以通信的一组终节点。</p>
+<p>端节点的每个端口都是至少一个分区的成员，并且可能是多个分区的成员。分区管理器为每个通道适配器端口分配分区键（P_Keys）。每个P_Key表示一个分区。每个QP<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="除了为原始数据报服务类型配置的QP0、QP1和QPs。">[1]</span></a></sup>和EE上下文都分配给一个分区，并在其发送的所有数据包中使用该P_Key，并检查其接收到的所有数据包中的P_Key。接收到无效的P_Key会导致数据包被丢弃。</p>
+<p>交换机和路由器可以选择用于强制分区。在这种情况下，分区管理器使用P_Key信息对交换机或路由器进行编程，当交换机或路由器检测到具有无效P_Key的数据包时，它会丢弃该数据包。</p>
+<h2 id="虚拟通道（Virtual-Lanes）"><a href="#虚拟通道（Virtual-Lanes）" class="headerlink" title="虚拟通道（Virtual Lanes）"></a>虚拟通道（Virtual Lanes）</h2><p>虚拟通道（VL）提供了一种用于在单个物理链路内创建多个虚拟链路的机制。虚拟通道表示端口中的一组传输和接收缓冲区。所有端口都支持VL<sub>15</sub>，该VL专门用于子网管理。还有15个其他VL（VL<sub>0</sub>到VL<sub>14</sub>）称为数据VL，所有端口都支持至少一个数据VL（VL<sub>0</sub>），并且可以提供VL<sub>1</sub>到VL<sub>n-1</sub>，其中n是端口支持的数据VL的数量）。端口使用的实际数据VL由SM配置，并基于数据包中的服务级别（SL）字段。默认情况下，使用VL0，直到SM确定链接两端支持的VL数量并将端口的SL编程为VL映射表。</p>
+<p>该端口对每个数据VL保持单独的流量控制，使得一个VL上的过多流量不会阻塞另一个VLAN上的流量。</p>
+<p><img src="/image/IBA%E5%8A%9F%E8%83%BD/image-20230714163556094.png#pic_center" srcset="/img/loading.gif" lazyload alt="image-20230714163556094"></p>
+<p>VL分配仅存在于链路两端的端口之间，并且一个链路上的VL分配独立于其他链路上的分配与其他链接上的分配无关。</p>
+<p>每个数据包都有一个SL，该SL在数据包报头中指定。当数据包遍历结构时，其SL确定在每个链路上将使用哪个VL。</p>
+<p>每个端口维护一个SL到VL映射表，以便在适当的VL上发送数据包。</p>
+<p>当链路两端的端口支持不同数量的数据VL时，数量较高的端口会降级为另一个端口支持的数量。因此，对于仅支持单个数据VL的端口，所有数据流量默认为VL<sub>0</sub>。</p>
+<h2 id="服务质量（Quality-of-Service）"><a href="#服务质量（Quality-of-Service）" class="headerlink" title="服务质量（Quality of Service）"></a>服务质量（Quality of Service）</h2><p>IBA提供了几种机制，允许子网管理器管理连接和无连接服务的各种服务质量保证。这些机制是服务级别，服务级别到虚拟通道映射和分区。 IBA不定义服务质量（QoS）级别（例如，尽力而为）。</p>
+<h3 id="服务级别（Server-Level）"><a href="#服务级别（Server-Level）" class="headerlink" title="服务级别（Server Level）"></a>服务级别（Server Level）</h3><p>IBA定义了一个服务级别（SL）属性，允许数据包在16个服务级别中的一个级别上运行。每个服务级别的定义和目的都超出了架构的范围，并作为结构管理策略留给了管理员。因此，服务级别的分配是每个节点的通信管理器及其与子网管理器协商的功能。</p>
+<h3 id="SL到VL映射"><a href="#SL到VL映射" class="headerlink" title="SL到VL映射"></a>SL到VL映射</h3><p>与服务级别相关的另一个IBA机制是虚拟通道。每个数据包都标识其SL，当数据包遍历结构时，数据包的SL是确定下一个链接上使用哪个VL的组成部分。为此，每个端口（交换机，路由器，终节点）都有一个由子网管理配置的SL到VL<sub>s</sub>映射表。当然，对于终止于仅支持一个数据VL的端口的所有链路，所有SL都映射到VL<sub>0</sub>。</p>
+<p>否则，子网管理策略确定将每个SL映射到可用VL。</p>
+<p>寻址QP0的数据包是子网管理数据包（SMP），并且仅使用VL15，并且忽略其SL。 VL<sub>15</sub>（管理VL）不是数据VL，并且不用于未寻址QP<sub>0</sub>的数据包。</p>
+<h3 id="分区（Partitions）-1"><a href="#分区（Partitions）-1" class="headerlink" title="分区（Partitions）"></a>分区（Partitions）</h3><p>与服务级别相关的另一个IBA机制是分区。结构管理可以为特定分区分配某些SL<sub>s</sub>。这允许SM隔离这些分区之间的业务流，即使两个分区都以相同的QoS级别运行，也可以保证每个分区公平地共享带宽，而不管其他分区中的节点是否行为不当或订阅过多。</p>
+<h2 id="注入速率控制（Injection-Rate-Control）"><a href="#注入速率控制（Injection-Rate-Control）" class="headerlink" title="注入速率控制（Injection Rate Control）"></a>注入速率控制（Injection Rate Control）</h2><p>IBA定义了许多不同的链路速率。最低的2.5 Gb&#x2F;sec比特率称为1x（一倍）链路。其他链路速率为10Gb&#x2F;sec（4x）和30 Gb&#x2F;sec（x12）。请参见InfiniBand Trade Association网站（<a href="www.infinibandta.org">www.infinibandta.org</a>）以了解当前速度路线图规划。为了在结构内支持多个链路速度，IBA定义了一种静态速率控制机制，该机制可防止具有高速链接的端口超出具有较低速度链接的端口的容量。</p>
+<p>作为路径解析过程的一部分，SubnAdm:PathRecord为节点提供路径的MTU和速率信息。路径信息用于确定限制因素是交换机端口还是端节点。</p>
+<p>图19中的示例说明，具有12x链路速度的端口A具有以3倍端口B的容量和12倍端口C、D或E的容量注入流量的潜力。此外，端口B有可能以端口C、D或E的4倍容量注入流量。由于流量往往是突发性的，因此每次端口A发送到其他端口时，结构都有很高的拥塞概率。链路流控制使结构不会因为拥塞而丢失数据包，但是反向压力会影响其他本来不会拥塞的路径。</p>
+<p>IBA通过为以大于1x的链路速度运行的端口定义静态速率控制机制来解决此问题。</p>
+<p><img src="/image/IBA%E5%8A%9F%E8%83%BD/image-20230715091421672.png#pic_center" srcset="/img/loading.gif" lazyload alt="image-20230715091421672"></p>
+<p>每个目的地都有一个与其相关的超时值，该超时值基于源和目的地比特率之间的比率。当源和目标比特率相等时，超时值为0（不需要）。否则，当端口将数据包发送到目的地时，它会将该目的地LID和超时值放入其静态速率控制表中。超时期限到期后，端口将删除该条目。当条目保留在表中时，端口不再向该目的地发送任何数据包（即，推迟表中未包含的其他目的地的流量）。当表中没有条目时，端口通过将数据包放在适当的VL输出队列中来传输数据包。</p>
+<h2 id="寻址（Addressing）"><a href="#寻址（Addressing）" class="headerlink" title="寻址（Addressing）"></a>寻址（Addressing）</h2><p>每个端节点包含一个或多个通道适配器，每个通道适配器包含一个或者多个端口。此外，每个通道适配器都包含许多队列对（QP）。</p>
+<p>每个QP具有由通道适配器分配的队列对编号（QPN），该队列对编号唯一地标识通道适配器内的QP。每个端口有两个众所周知的QP（QP0和QP1），所有其他QP都配置为通过特定端口进行操作。对于可靠的数据报服务，决定端口的是EE上下文而不是QP上下文。</p>
+<p>原始数据报以外的数据包包含目标QP的QPN。当信道适配器接收到数据包时，它使用目标QPN(和EE上下文用于可靠数据报)的上下文来处理该分组。</p>
+<p>每个端口都有由本地子网管理器(即子网管理器)分配的本地ID(LID)。在子网中，LID是唯一的。交换机使用LID在子网内路由数据包。本地子网管理器根据LID和该端口相对于特定交换机的位置配置交换机中的路由表。每个数据包都包含一个源LID(SLID)，用于标识将数据包注入子网的端口，以及一个目的LID(DLID)，用于标识结构将在其中传递数据包的端口。</p>
+<p>IBA还通过定义LID Mask Control(LMC)在物理端口中提供多个虚拟端口。LMC指定在验证数据包DLID是否与分配的LID匹配时，物理端口屏蔽(忽略)的LID的最低有效位的数目。这些位不会被交换机忽略，因此子网管理器可以基于这些最低有效位编程通过Fabric的不同路径。因此，该端口似乎是2<sup>LMC</sup>端口，用于跨Fabric路由。</p>
+<p>每个端口还至少有一个IPv6地址格式的全局ID(GID)。GID是全局唯一的。每个数据包可选地包含一个全局路由报文头(GRH)，指定一个源GID(SGID)，该源GID(SGID)标识将数据包注入到结构中的端口，以及一个目标GID(DGID)，该目标GID标识结构将在其中传递包的端口。路由器使用GRH在子网之间路由数据包。交换机忽略GRH。</p>
+<p>每个通道适配器都有一个全局唯一标识符(GUID)，称为由通道适配器供应商分配的节点GUID。它的每个端口都有一个端口GUID，也是由通道适配器供应商分配的。端口GUID与本地子网前缀组合在一起成为端口的默认GID。</p>
+<p>子网管理为LID&#x2F;GID解析服务提供GUID。因此，一个节点可以通过记住一个节点或端口GUID来持久地标识另一个节点。</p>
+<p>QP的地址是端口地址(GID+LID)和QPN的组合。为了与QP通信，需要一个信息向量，包括端口地址(LID和&#x2F;或GID)、QPN、服务级别、路径MTU，以及可能的其他信息。此信息可通过发送到子网管理的路径查询请求获得。</p>
+<p>服务ID用于解析QP。有些服务ID是众所周知的(即，某些功能具有指定的服务ID)，有些服务ID在I&#x2F;O控制器的服务条目列表中公布。子网管理器提供GID&#x2F;LID解析的GUID，但目标提供QP解析的服务ID作为通信管理过程的一部分。</p>
+<p>一般来说，请求通信消息的目标节点使用服务ID将请求定向到实体，该实体决定是否继续进行通信建立。如果判定是肯定的，则目标返回建立通信所需的信息，其中包括QPN加上特定于传输服务类型的其他信息。</p>
+<p>简化的地址解析过程如图20所示。</p>
+<p><img src="/image/IBA%E5%8A%9F%E8%83%BD/image-20230715094305406.png#pic_center" srcset="/img/loading.gif" lazyload alt="image-20230715094305406"></p>
+<p>在图中，目标是一个I&#x2F;O控制器，在这里发起者通过查询IOC以获得支持的I&#x2F;O协议列表来学习服务ID。只有当正在建立的服务使用与管理MAD不同的路径特性(SL、QoS、MTU等)时，才需要第二个路径解析。</p>
+<h2 id="多播（Multicast）"><a href="#多播（Multicast）" class="headerlink" title="多播（Multicast）"></a>多播（Multicast）</h2><p>多播是一种一对多&#x2F;多对多的通信模式，旨在简化和提高一组终端节点之间的通信效率。</p>
+<p>每个多播组由唯一的GID标识。多播将通过一个端口为每个节点提供一个参与管理的端口。这些信息被分发到交换机。每个交换机都配置了多播通信的路由信息，该信息指定了分组需要传输的所有端口。注意确保不存在循环(即，单个生成树使得包不会转发到已经处理该包的交换机)。</p>
+<p>节点在它发送给该多播组的所有数据包中使用多播LID和GID。当交换机接收到多播数据包(即，在数据包的DLID字段中有多播限制的数据包)时，它复制该数据包并将其发送到除到达端口之外的每个指定端口。以这种方式，每个级联交换机复制分组，使得分组仅到达每个订阅的端节点一次。</p>
+<p>信道适配器可以限制可以为同一多播地址注册的QP的数量。通道适配器将多播数据包分发给为该多播地址注册的QP。一个QP可以为同一个端口的多个地址注册，但是如果使用者希望在多个端口上接收多播流量，则每个端口需要一个不同的QP。信道适配器通过分组的DLID或分组的目的地QP字段中的特殊值来识别多播分组，并将分组路由到为该地址和端口注册的QP。注意，多播数据包中的目的地QP字段不是QPN。</p>
+<h3 id="多播示例"><a href="#多播示例" class="headerlink" title="多播示例"></a>多播示例</h3><p>图21举例说明了不可靠的多播IBA操作：</p>
+<ul>
+<li><p>在IBA路由元件(交换机或路由器)端口接收PSN&#x3D;1129的数据包。</p>
+</li>
+<li><p>交换&#x2F;路由组件检查包报文头并提取DLID&#x2F;多播GID以确定它是否对应于多播组。一个实现可以将该数据维护为其内部路由表的一部分，例如，对应于该分组应转发的输出端口的位掩码。</p>
+</li>
+<li><p>交换机或路由器复制数据包(取决于实现)，并将数据包转发到输出端口。</p>
+</li>
+</ul>
+<p><img src="/image/IBA%E5%8A%9F%E8%83%BD/image-20230715095705041.png#pic_center" srcset="/img/loading.gif" lazyload alt="image-20230715095705041"></p>
+<h3 id="组管理"><a href="#组管理" class="headerlink" title="组管理"></a>组管理</h3><p>IBA没有定义多播组管理协议来实现加入和离开操作。然而，管理接口和相关的MAD用于实现多播组协议被指定。虽然这些机制是子网管理(SA)的一部分，但某些操作是由子网管理器(SM)隐式执行的。在下面的讨论中，术语多播管理实体用于描述SA&#x2F;SM关于多播管理的预期责任。有关详细信息，请参阅多播成员记录的子网管理属性。</p>
+<h4 id="组播组创建"><a href="#组播组创建" class="headerlink" title="组播组创建"></a>组播组创建</h4><p>多播组的创建是IBA中的一个显式操作，目的是提供对<strong>组特征</strong>的单一控制，并允许成员进行颠覆性的加入。在能够成功加入组之前，必须由多播管理实体创建组：</p>
+<p>1） (管理)应用程序定义(或确定)目标多播组地址(GID)。它指定特定的组特征(PMTU、P-Key等)，并通过调用多播管理实体的多播组创建(multicast group create)来创建多播组。此应用程序可以请求特定的多播GID或为其分配一个。</p>
+<p>2）多播管理实体可以通知正在创建的新组(IBA V1.1中未定义)的子网上的适当路由器。路由器协议应该确定这个多播组是否在另一个子网中运行。如果是，路由器返回现有多播组的PMTU，以确定是否允许创建。</p>
+<p>3）多播管理实体将多播组地址映射到多播LID。</p>
+<h4 id="组播组加入"><a href="#组播组加入" class="headerlink" title="组播组加入"></a>组播组加入</h4><p>多播组加入算法(适用于IBA不可靠数据报多播组)定义如下：</p>
+<ol>
+<li>应用程序定义或确定目标多播组地址并调用多播加入操作。</li>
+<li>底层join实现确定关联的端节点是否参与多播组。如果是，应用程序将建立一个新的本地QP并执行加入该组所需的步骤。否则，应用程序将调用管理接口与多播组管理实体通信。</li>
+<li>多播管理实体在接收到加入请求时执行以下步骤：</li>
+</ol>
+<p>——a) 验证多播组地址——如果无效，则加入操作失败。</p>
+<p>——b) 验证请求的PMTU——加入操作失败(如果无效)。</p>
+<p>——c) 验证连接到端节点的交换机是否能够进行多播操作。交换机可以通过数据包复制支持多播操作，也可以配置为将所有多播数据包发送到端节点连接端口。</p>
+<p>——d) 如果多播组地址当前在此子网内运行，请执行以下操作：</p>
+<p>————i) 验证参与此多播组的所有交换机和路由器都能支持请求的PMTU。如果不能，则加入操作将失败。</p>
+<p>————ii)每个多播组通过在参与交换机之间定义逻辑路由树来实现。重新生成&#x2F;修改路由树以包含新的端节点。多播管理实体通知结构管理更新所有交换机和路由器中的关联路由转发表，以反映此新拓扑。</p>
+<p>——e) 如果多播组地址不在此子网内运行，请执行以下步骤。</p>
+<p>————i) 通知此子网内的每个路由器加入操作。路由器协议应该确定这个多播组是否在另一个子网中运行。如果是这样，路由器返回现有多播组的PMTU，以确定是否允许创建和后续的加入操作。</p>
+<p>————ii)将多播组地址映射到未使用的多播LID。</p>
+<p>————iii)建立多播路由树，并相应地更新相关的交换机和路由器路由转发表。</p>
+<p>————iv)创建组并将PMTU分配给多播组。</p>
+<p>————v) 将多播LID和相关的组特征返回到端节点，并允许多播操作启动。</p>
+<p>——f) 此子网中的每个路由器都被通知成功的多播加入操作。路由器调用适当的多播组管理操作来添加此子网作为参与关联多播组的成员。本协议不符合IBA规范。</p>
+<ol start="4">
+<li>将成员添加到组中。</li>
+</ol>
+<h4 id="退出多播组"><a href="#退出多播组" class="headerlink" title="退出多播组"></a>退出多播组</h4><p>当应用程序离开多播组时，将使用以下算法：</p>
+<ol>
+<li>应用程序的QP作为多播组的目标被删除。如果仍有QP参与该多播组，则无需进一步操作。</li>
+<li>如果在这个端口上没有更多的QP在多播组中参与，则退出实现通知多播管理实体该端节点不再参与该多播组。多播管理实体执行以下步骤：</li>
+</ol>
+<p>——a) 更新交换机和路由器路由转发表，以有效地删除此端节点作为与此多播组关联的数据包的目标。</p>
+<p>——b) 从组中删除成员。</p>
+<h4 id="删除多播组"><a href="#删除多播组" class="headerlink" title="删除多播组"></a>删除多播组</h4><p>当(管理)应用程序认为不需要多播组或没有其他端节点参与多播组时，可以删除该多播组。在接收到删除请求时，多播管理实体采取以下步骤：</p>
+<ol>
+<li>从多播组地址取消多播LID的映射。</li>
+<li>通知此子网中的每个路由器此子网不再参与关联的多播组。</li>
+</ol>
+<h3 id="多播删减"><a href="#多播删减" class="headerlink" title="多播删减"></a>多播删减</h3><p>为了提高结构效率，多播组管理实体应定期验证参与多播组的所有终端节点和路由器仍在参与，如果没有，则应通过执行多播组离开算法将它们从多播组中删除。验证周期不在IBA的范围内。</p>
+<h2 id="Verbs"><a href="#Verbs" class="headerlink" title="Verbs"></a>Verbs</h2><p>IBA描述了主机通道适配器和该主机通道适配器提供的I&#x2F;O服务的使用者之间的服务接口。向使用者公开的所需行为由一组称为Verb的语义来描述。Verbs描述基于向通道适配器提交工作请求并返回完成状态的特定队列模型在主机通道适配器和使用者之间发生的操作。</p>
+<p>Verbs的目的不是指定API，而是充分描述接口，以允许定义API，从而允许I&#x2F;O服务的使用者充分利用该体系结构。</p>
+<blockquote>
+<p>翻译自《InfiniBand IB.Specification.Vol.1-Release-1.4-2020-04-07.3》3.5节。</p>
+</blockquote>
+<section class="footnotes"><div class="footnote-list"><ol><li><span id="fn:1" class="footnote-text"><span>除了为原始数据报服务类型配置的QP0、QP1和QPs。
+<a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩</a></span></span></li></ol></div></section>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/RDMA/" class="category-chain-item">RDMA</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/IBA/">#IBA</a>
+      
+        <a href="/tags/RDMA/">#RDMA</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>IBA功能</div>
+      <div>http://example.com/2023/07/15/RDMA/IBA功能/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Oxley</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年7月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/07/17/RDMA/RDMA%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90%E5%BF%AB%E9%80%9F%E6%A3%80%E7%B4%A2%E7%9B%AE%E5%BD%95/" title="RDMA学习资源快速检索目录">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">RDMA学习资源快速检索目录</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/07/08/%E7%BD%91%E7%BB%9C/%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE/%E5%B8%B8%E7%94%A8%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE%E4%B8%8E%E8%A7%84%E8%8C%83%E5%AF%B9%E5%BA%94%E8%A1%A8/" title="常用网络协议与规范对应表">
+                        <span class="hidden-mobile">常用网络协议与规范对应表</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+  <div id="waline"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#waline', function() {
+      Fluid.utils.createCssLink('https://lib.baomitu.com/waline/2.14.1/waline.min.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/waline/2.14.1/waline.min.js', function() {
+        var options = Object.assign(
+          {"serverURL":"https://waline-comments-lh9l5ftj7-eddyvv.vercel.app/","path":"window.location.pathname","meta":["nick","mail","link"],"requiredMeta":["nick"],"lang":"zh-CN","emoji":["https://cdn.jsdelivr.net/gh/walinejs/emojis/weibo"],"dark":"html[data-user-color-scheme=\"dark\"]","wordLimit":0,"pageSize":10},
+          {
+            el: '#waline',
+            path: window.location.pathname
+          }
+        )
+        Waline.init(options);
+        Fluid.utils.waitElementVisible('#waline .vcontent', () => {
+          var imgSelector = '#waline .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> <div style="font-size: 0.85rem"> <span id="timeDate">载入天数...</span> <span id="times">载入时分秒...</span> <script src="/js/duration.js"></script> </div> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
