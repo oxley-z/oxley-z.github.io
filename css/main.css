@@ -1932,8 +1932,14 @@ input[type=checkbox] {
 .about-icons > a:not(:last-child) {
   margin-right: 0.5rem;
 }
-.about-icons > a > i {
+.about-icons > a > i,
+.about-icons > a > img.about-icon-avatar {
   font-size: 1.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  vertical-align: middle;
+  border-radius: 50%;
+  object-fit: cover;
 }
 .category-bar .category-list {
   max-height: 85vh;
